@@ -1,0 +1,83 @@
+
+    <h2 ng-show="editing">Editing event #{{e.id}}</h2>
+    <h2 ng-hide="editing">Creating event</h2>
+    <div ng-show='editing' class="alert alert-success" >
+        Registration form: <a href='/events/{{e.id}}/register' target='_blank'>Link</a>
+    </div>
+
+    <ul class="nav nav-tabs" ng-show="editing">
+        <li ng-class="{active: tab == 'info'}"><a ng-click="tab='info'">Information</a></li>
+        <li ng-class="{active: tab == 'part'}"><a ng-click="tab='part'">Participants</a></li>
+
+    </ul>
+
+<form name="myForm" class="form-horizontal" ng-show="tab == 'info' || !editing">
+    <div class="control-group" ng-class="{error: myForm.title.$invalid}">
+        <label class="control-label">Title</label>
+        <div class="controls"><input type="text" name="title" ng-model="e.title" required class='input-xxlarge'>
+        <span ng-show="myForm.title.$error.required" class="help-inline">
+            Required</span>
+        </div>
+    </div>
+    <div class="control-group" ng-class="{error: myForm.desc.$invalid}">
+        <label class="control-label">Description</label>
+        <div class="controls">
+            <textarea rows='10' class='input-xxlarge' name="desc" ng-model="e.desc" required></textarea>
+        <span ng-show="myForm.desc.$error.required" class="help-inline">
+            Required</span>
+        </div>
+    </div>
+
+    <div class="control-group" ng-class="{error: myForm.url.$invalid}">
+        <label class="control-label">Url</label>
+        <div class="controls">
+            <input type="url" name="desc" ng-model="e.url" required class='input-xxlarge'>
+        <span ng-show="myForm.url.$error.required" class="help-inline">
+            Required</span>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <div class="controls">
+         <a href="#/" class="btn">Cancel</a>
+         <button ng-click="save()" ng-disabled="isClean() || myForm.$invalid"
+            class="btn btn-primary">Save</button>
+         <button ng-click="shouldBeOpen = true"
+            ng-show="e.id" class="btn btn-danger">Delete</button>
+        </div>
+    </div>
+    <div modal="shouldBeOpen" close="shouldBeOpen = false">
+        <div class="modal-header">
+            <h4>Deleting event "{{e.title}}"</h4>
+        </div>
+        <div class="modal-body">
+            If you delete this event, all registration would be also deleted.
+        </div>
+        <div class="modal-footer">
+            <button class="btn cancel" ng-click="shouldBeOpen = false">Cancel</button>
+            <button class="btn btn-danger" ng-click="destroy()">Delete</button>
+        </div>
+    </div>
+</form>
+
+<div class='' ng-show="editing && tab=='part'">
+    <input type="text" ng-model="search" class="search-query" placeholder="Search">
+    <table class='table'>
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>e-mail</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="p in e.participants | filter:search | orderBy:'title'" class="clickable" ng-click='show(p.id)'>
+            <td>{{p.name}}</td>
+            <td>{{p.email}}</td>
+            <td>
+                <i class="icon-trash"></i>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>

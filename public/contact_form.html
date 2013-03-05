@@ -184,7 +184,8 @@
 	</div>
     <script>
     angular.module('gdgorgua')
-            .value('GoogleUser', <%- locals.user?JSON.stringify(user):'null' %>);
+            .value('GoogleUser', <%- locals.user?JSON.stringify(user):'null' %>)
+            .value('GoogleEvent', <%- locals.event?JSON.stringify(event):'null' %>);
 
     </script>
 </body>

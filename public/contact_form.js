@@ -1,5 +1,5 @@
 angular.module('gdgorgua',[])
-.controller('contactForm', function($scope,$http, $window, $location,GoogleUser) {
+.controller('contactForm', function($scope,$http, $window, $location,GoogleUser, GoogleEvent) {
   $scope.user = { gender:'male',t_shirt_size:'m','english_knowledge':'elementary','experience_level':'newbie' }
 
         if ($window.localStorage) {
@@ -54,6 +54,9 @@ angular.module('gdgorgua',[])
 	        $scope.showOk = true;
 	        var uid = r.data.uid;
 	        if ($window.localStorage) $window.localStorage.setItem('user', JSON.stringify($scope.user));
+            if (GoogleEvent && GoogleEvent.url) {
+                $window.location.href = GoogleEvent.url;
+            }
        }
     } 
 

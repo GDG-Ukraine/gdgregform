@@ -33,7 +33,7 @@ app.post('/api/participants', function (req, res){
     var addToEvent = function(p) {
 	   // add to event
 	   models.participations.find({ where: {googler_id:p.id,event_id:req.body.event}}).success(function(np) {
-		if (np==null)  Participations.create({googler_id:p.id,event_id:req.body.event});
+		if (np==null)  models.participations.create({googler_id:p.id,event_id:req.body.event});
            });
         };
 	var saved = function(p) {

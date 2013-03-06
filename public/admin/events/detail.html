@@ -66,6 +66,7 @@
         <thead>
         <tr>
             <th>Name</th>
+            <th>Surname</th>
             <th>e-mail</th>
             <th></th>
         </tr>
@@ -73,6 +74,7 @@
         <tbody>
         <tr ng-repeat="p in e.participants | filter:search | orderBy:'title'" class="clickable" ng-click='show(p.id)'>
             <td>{{p.name}}</td>
+            <td>{{p.surname}}</td>
             <td>{{p.email}}</td>
             <td>
                 <i class="icon-trash"></i>

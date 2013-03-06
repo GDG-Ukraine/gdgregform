@@ -17,6 +17,24 @@
         </div>
     </div>
 
+    <div class="control-group" ng-class="{error: myForm.surname.$invalid}">
+        <label class="control-label">Surname</label>
+        <div class="controls">
+            <input type="text" name="name" ng-model="p.surname" required>
+        <span ng-show="myForm.surname.$error.required" class="help-inline">
+            Required</span>
+        </div>
+    </div>
+
+    <div class="control-group" ng-class="{error: myForm.gplus.$invalid}">
+        <label class="control-label">Google+</label>
+        <div class="controls">
+            <input type="text" name="name" ng-model="p.gplus" >
+            <a ng-show='p.gplus' href="{{p.gplus}}" target="_blank"><i class="icon-share"></i>Open</a>
+         </div>
+    </div>
+
+
     <div class="control-group" ng-class="{error: myForm.email.$invalid}">
         <label class="control-label">Email</label>
         <div class="controls">

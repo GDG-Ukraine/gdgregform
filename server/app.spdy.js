@@ -1,4 +1,5 @@
 var spdy = require('spdy'),
+    fs = require('fs'),
     app = require('./app').app;
 
 // Launch server

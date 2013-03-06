@@ -1,5 +1,6 @@
 var models = require('../models');
-var auth = require('../auth');
+var auth = require('../auth'),
+    db = require('../db');
 
 module.exports = function(app) {
 
@@ -17,7 +18,7 @@ app.get('/api/participants/:id', function (req, res) {
     if (!req.params.id) return res.send("Invalid request");
     models.participants.find(req.params.id).success(function (p) {
         p.getEvents().success(function(events) {
-            var newP = copySqObject(p);
+            var newP = db.copySqObject(p);
             newP.events = events;
             res.json(newP);
         });

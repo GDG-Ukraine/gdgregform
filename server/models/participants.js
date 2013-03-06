@@ -1,4 +1,6 @@
-exports.Participants = require('../db.js').sequelize.define('gdg_participants',{
+var Sequelize = require('sequelize');
+
+module.exports = require('../db.js').sequelize.define('gdg_participants',{
 	"name": Sequelize.STRING,
 	"surname":Sequelize.STRING,
 	"nickname":Sequelize.STRING,

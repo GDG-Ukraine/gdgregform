@@ -17,7 +17,7 @@ var allowedUsers = [
     'oleh.zasadnyy@gmail.com'
 ];
 
-exports.check = function(req, res, next) {
+exports.restrictAdmin = function(req, res, next) {
     if (req.path.substring(0,6)=='/admin') {
         //console.log(req.user);
         if (!req.user) {
@@ -60,7 +60,7 @@ everyauth.everymodule.handleLogout( function (req, res) {
 });
 
 
-exports.allowedUser = function(req,res) {
+exports.check = function(req,res) {
     var allowed = req.user && allowedUsers.indexOf(req.user.email)>-1;
     if (!allowed) res.end("Not authorized");
     return allowed;

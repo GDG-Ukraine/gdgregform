@@ -1,6 +1,8 @@
 module.exports = function(app) {
 
-var application_root = __dirname,
+var application_root = __dirname;
+var path = require('path'),
+    models = require('./models');
 
 // for static serving
 var s = require('express').static(path.join(application_root, "public"));
@@ -14,7 +16,7 @@ app.get(/\/events\/(.*?)\/(.*)/, function(req,res,next) {
     res.redirect("/events/"+eventId+"/register");
   else
   if (req.params[1] == 'register') {
-     GEvents.find(eventId).success(function(e) {
+     models.gevents.find(eventId).success(function(e) {
         if (!e) res.end("No such event")
         else res.render('contact_form.html', {event: e});
      });

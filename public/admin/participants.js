@@ -1,7 +1,18 @@
 angular.module('gdgorgua')
 
-.controller('ParticipantsListCtrl', function ($scope, Participant, $location) {
-  $scope.participants = Participant.query();
+.controller('ParticipantsListCtrl', function ($scope, Participant, $location, $window) {
+  if ($window.sessionStorage) {
+            try {
+                $scope.participants = JSON.parse($window.sessionStorage.getItem('gdgparticipants'));
+            } catch (err) {}
+  }
+
+  Participant.query({},function(ps) {
+      $scope.participants = ps;
+      if ($window.sessionStorage) {
+          $window.sessionStorage.setItem("gdgparticipants",JSON.stringify(ps));
+      }
+  });
   $scope.edit = function(id) {
       $location.path('/participants/'+id);
   }
@@ -19,10 +30,15 @@ angular.module('gdgorgua')
 
 .controller('ParticipantsEditCtrl', function ($scope, $location, $routeParams, Participant, $window,GEvent, $http) {
   var self = this;
-
+  if ($window.sessionStorage) {
+            try {
+                $scope.p = JSON.parse($window.sessionStorage.getItem('gdgparticipant'+$routeParams.participantId));
+            } catch(err) {};
+  }
   Participant.get({id: $routeParams.participantId}, function(participant) {
     self.original = participant;
     $scope.p = new Participant(self.original);
+    if ($window.sessionStorage)  $window.sessionStorage.setItem('gdgparticipant'+$routeParams.participantId, JSON.stringify(participant));
 
   });
 

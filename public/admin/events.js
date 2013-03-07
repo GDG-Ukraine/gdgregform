@@ -1,7 +1,18 @@
 angular.module('gdgorgua')
 
-    .controller('EventsListCtrl', function ($scope, GEvent, $location) {
-        $scope.events = GEvent.query();
+    .controller('EventsListCtrl', function ($scope, GEvent, $location, $window) {
+        if ($window.sessionStorage) {
+            try {
+                $scope.events = JSON.parse($window.sessionStorage.getItem('gdgevents'));
+            } catch (err) {}
+        }
+        //$scope.events = GEvent.query()
+        GEvent.query({},function(events) {
+            $scope.events = events;
+            if ($window.sessionStorage) {
+                $window.sessionStorage.setItem("gdgevents",JSON.stringify(events));
+            }
+        });
         $scope.edit = function (id) {
             $location.path('/events/' + id);
         }
@@ -18,15 +29,26 @@ angular.module('gdgorgua')
     })
 
 
-    .controller('EventsEditCtrl', function ($scope, $location, $routeParams, GEvent, $http,Participant) {
+    .controller('EventsEditCtrl', function ($scope, $location, $routeParams, GEvent, $http,Participant,$window) {
         var self = this;
         $scope.editing = true;
         $scope.tab = 'info';
 
+        if ($window.sessionStorage) {
+            try {
+                $scope.e = JSON.parse($window.sessionStorage.getItem('gdgevent'+$routeParams.eventId));
+            } catch(err) {};
+        }
+        $scope.refresh = function() {
+            $scope.loading = true;
         GEvent.get({id: $routeParams.eventId}, function (e) {
+            $scope.loading = false;
             self.original = e;
             $scope.e = new GEvent(self.original);
+            $window.sessionStorage.setItem('gdgevent'+$routeParams.eventId, JSON.stringify(e));
         });
+        };
+        $scope.refresh();
 
         $scope.isClean = function () {
             return angular.equals(self.original, $scope.e);

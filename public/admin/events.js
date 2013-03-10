@@ -1,6 +1,6 @@
 angular.module('gdgorgua')
 
-    .controller('EventsListCtrl', function ($scope, GEvent, $location, $window) {
+    .controller('EventsListCtrl', function ($scope, GEvent, $location, $window, $filter) {
         if ($window.sessionStorage) {
             try {
                 $scope.events = JSON.parse($window.sessionStorage.getItem('gdgevents'));
@@ -8,6 +8,9 @@ angular.module('gdgorgua')
         }
         //$scope.events = GEvent.query()
         GEvent.query({},function(events) {
+            events.forEach(function(e) {
+                e.date = $filter('date')(e.date, 'yyyy-MM-dd');
+            })
             $scope.events = events;
             if ($window.sessionStorage) {
                 $window.sessionStorage.setItem("gdgevents",JSON.stringify(events));
@@ -29,7 +32,7 @@ angular.module('gdgorgua')
     })
 
 
-    .controller('EventsEditCtrl', function ($scope, $location, $routeParams, GEvent, $http,Participant,$window) {
+    .controller('EventsEditCtrl', function ($scope, $location, $routeParams, GEvent, $http,Participant,$window, $filter) {
         var self = this;
         $scope.editing = true;
         $scope.tab = 'info';
@@ -41,13 +44,18 @@ angular.module('gdgorgua')
         }
         $scope.refresh = function() {
             $scope.loading = true;
-        GEvent.get({id: $routeParams.eventId}, function (e) {
-            $scope.loading = false;
-            self.original = e;
-            $scope.e = new GEvent(self.original);
-            $window.sessionStorage.setItem('gdgevent'+$routeParams.eventId, JSON.stringify(e));
+            GEvent.get({id: $routeParams.eventId}, function (e) {
+                $scope.loading = false;
+                e.date = $filter('date')(e.date,'yyyy-MM-dd');
+                self.original = e;
+                $scope.e = new GEvent(self.original);
+                $window.sessionStorage.setItem('gdgevent'+$routeParams.eventId, JSON.stringify(e));
         });
         };
+        /*$scope.$watch('dateStr', function(nv) {
+            if (!nv) return;
+            $scope.e.date = Date.parse($scope.dateStr);
+        });*/
         $scope.refresh();
 
         $scope.isClean = function () {
@@ -62,6 +70,7 @@ angular.module('gdgorgua')
 
         $scope.save = function () {
             $scope.e.$update(function () {
+                $window.sessionStorage.setItem('gdgevent'+$routeParams.eventId, JSON.stringify($scope.e));
                 $location.path('/');
             });
         };

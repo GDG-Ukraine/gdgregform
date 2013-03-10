@@ -3,13 +3,15 @@
 <table class="table table-striped">
     <thead>
     <tr>
+        <th style="width: 6em">Date</th>
         <th>Title</th>
         <th>Description</th>
         <th><a href="#/events/new"><i class="icon-plus-sign"></i></a></th>
     </tr>
     </thead>
     <tbody>
-    <tr ng-repeat="e in events | filter:search | orderBy:'title'" ng-click='edit(e.id)' class='clickable'>
+    <tr ng-repeat="e in events | filter:search | orderBy:'date':true" ng-click='edit(e.id)' class='clickable'>
+        <td>{{e.date}}</td>
         <td>{{e.title}}</td>
         <td>{{e.desc}}</td>
         <td>

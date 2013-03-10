@@ -51,10 +51,10 @@
     <a ng-click='back()' class="btn">Cancel</a>
     <button ng-click="save()" ng-disabled="isClean() || myForm.$invalid"
             class="btn btn-primary">Save</button>
-    <button ng-click="shouldBeOpen = true"
+    <button bs-modal="'deleteUser'"
             ng-show="p.id" class="btn btn-danger">Delete</button>
 
-    <div modal="shouldBeOpen" close="shouldBeOpen = false">
+    <script type="text/ng-template" id="deleteUser">
         <div class="modal-header">
             <h4>Deleting participant "{{p.name}}"</h4>
         </div>
@@ -62,10 +62,10 @@
             If you delete this participant, all registration would be also deleted.
         </div>
         <div class="modal-footer">
-            <button class="btn cancel" ng-click="shouldBeOpen = false">Cancel</button>
-            <button class="btn btn-danger" ng-click="destroy()">Delete</button>
+            <button class="btn cancel" ng-click="dismiss()">Cancel</button>
+            <button class="btn btn-danger" ng-click="destroy();dismiss()">Delete</button>
         </div>
-    </div>
+    </script>
 </form>
 
   <div class='' ng-show="tab=='events'">

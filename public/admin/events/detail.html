@@ -34,32 +34,47 @@
         <label class="control-label">Url</label>
         <div class="controls">
             <input type="url" name="desc" ng-model="e.url" required class='input-xxlarge'>
+            <a ng-show='e.url' href="{{e.url}}" target="_blank"><i class="icon-share"></i>Open</a>
         <span ng-show="myForm.url.$error.required" class="help-inline">
             Required</span>
         </div>
     </div>
 
-    <div class="control-group">
+    <div class="control-group input-append" ng-class="{error: myForm.date.$invalid}">
+        <label class="control-label">Date</label>
         <div class="controls">
-         <a href="#/" class="btn">Cancel</a>
-         <button ng-click="save()" ng-disabled="isClean() || myForm.$invalid"
-            class="btn btn-primary">Save</button>
-         <button ng-click="shouldBeOpen = true"
-            ng-show="e.id" class="btn btn-danger">Delete</button>
+            <input type="text" name="date" ng-model="e.date" required bs-datepicker data-date-format="yyyy-mm-dd" disabled>
+            <button type="button" class="btn" data-toggle="datepicker"><i class="icon-calendar"></i></button>
+        <span ng-show="myForm.date.$error.required" class="help-inline">
+            Required</span>
         </div>
     </div>
-    <div modal="shouldBeOpen" close="shouldBeOpen = false">
+
+
+    <script type="text/ng-template" id="eventDelete.html">
         <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             <h4>Deleting event "{{e.title}}"</h4>
         </div>
         <div class="modal-body">
             If you delete this event, all registration would be also deleted.
         </div>
         <div class="modal-footer">
-            <button class="btn cancel" ng-click="shouldBeOpen = false">Cancel</button>
-            <button class="btn btn-danger" ng-click="destroy()">Delete</button>
+            <button class="btn cancel" ng-click="dismiss()">Cancel</button>
+            <button class="btn btn-danger" ng-click="destroy();dismiss()">Delete</button>
+        </div>
+
+    </script>
+    <div class="control-group">
+        <div class="controls">
+         <a href="#/" class="btn">Cancel</a>
+         <button ng-click="save()" ng-disabled="isClean() || myForm.$invalid"
+            class="btn btn-primary">Save</button>
+         <button bs-modal="'eventDelete.html'"
+            ng-show="e.id" class="btn btn-danger">Delete</button>
         </div>
     </div>
+
 </form>
 
 <div class='' ng-show="editing && tab=='part'">

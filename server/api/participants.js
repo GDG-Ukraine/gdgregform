@@ -59,7 +59,12 @@ app.delete('/api/participants/:id', function (req, res){
   if (!auth.check(req,res)) return;
   models.participants.find(req.params.id).success(function (p) { 
 	p.destroy()
-	  .success(function(p) { res.send({ok: true});}).error(app.onError(res));
+	  .success(function(p) {
+            models.participations.findAll({where:{googler_id:req.params.id}}).success(function(regs) {
+                regs.forEach(function(reg) { reg.destroy();});
+                res.send({ok: true});
+            });
+        }).error(app.onError(res));
   }).error(function(err) { console.log(err);res.send(err); }); 
 });
 

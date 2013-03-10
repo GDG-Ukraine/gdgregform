@@ -1,4 +1,4 @@
-angular.module('gdgorgua', ['ngResource','ui.bootstrap'])
+angular.module('gdgorgua', ['ngResource','$strap'])
     .config(function($routeProvider) {
         $routeProvider.
             when('/events/', {controller:'EventsListCtrl', templateUrl:'events/list.html'}).

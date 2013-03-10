@@ -34,7 +34,13 @@ app.delete('/api/events/:id', function (req, res){
   if (!auth.check(req,res)) return;
   models.gevents.find(req.params.id).success(function (p) { 
 	p.destroy()
-	  .success(function(p) { res.send({ok: true});}).error(app.onError(res));
+	  .success(function(p) {
+            models.participations.findAll({where:{event_id:req.params.id}}).success(function(regs) {
+                regs.forEach(function(reg) { reg.destroy();});
+                res.send({ok: true});
+            });
+
+      }).error(app.onError(res));
   }).error(app.onError(res));
 });
 // list

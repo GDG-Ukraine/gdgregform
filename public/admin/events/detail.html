@@ -40,13 +40,21 @@
         </div>
     </div>
 
-    <div class="control-group input-append" ng-class="{error: myForm.date.$invalid}">
+    <div class="control-group" ng-class="{error: myForm.date.$invalid}">
         <label class="control-label">Date</label>
         <div class="controls">
-            <input type="text" name="date" ng-model="e.date" required bs-datepicker data-date-format="yyyy-mm-dd" disabled>
+            <input type="text" name="date" ng-model="e.date" required bs-datepicker data-date-format="yyyy-mm-dd" >
             <button type="button" class="btn" data-toggle="datepicker"><i class="icon-calendar"></i></button>
         <span ng-show="myForm.date.$error.required" class="help-inline">
             Required</span>
+        </div>
+    </div>
+
+    <div class="control-group " ng-class="{error: myForm.closereg.$invalid}">
+        <label class="control-label">Registration close</label>
+        <div class="controls">
+            <input type="text" name="closereg" ng-model="e.closereg" bs-datepicker data-date-format="yyyy-mm-dd">
+            <button type="button" class="btn" data-toggle="datepicker"><i class="icon-calendar"></i></button>
         </div>
     </div>
 

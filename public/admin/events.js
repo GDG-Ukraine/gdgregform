@@ -53,15 +53,12 @@ angular.module('gdgorgua')
             GEvent.get({id: $routeParams.eventId}, function (e) {
                 $scope.loading = false;
                 e.date = $filter('date')(e.date,'yyyy-MM-dd');
+                e.closereg = $filter('date')(e.closereg,'yyyy-MM-dd');
                 self.original = e;
                 $scope.e = new GEvent(self.original);
                 $window.sessionStorage.setItem('gdgevent'+$routeParams.eventId, JSON.stringify(e));
         });
         };
-        /*$scope.$watch('dateStr', function(nv) {
-            if (!nv) return;
-            $scope.e.date = Date.parse($scope.dateStr);
-        });*/
         $scope.refresh();
 
         $scope.isClean = function () {

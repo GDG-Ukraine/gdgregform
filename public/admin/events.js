@@ -6,6 +6,12 @@ angular.module('gdgorgua')
                 $scope.events = JSON.parse($window.sessionStorage.getItem('gdgevents'));
             } catch (err) {}
         }
+        var currentDate = new Date();
+        $scope.isPast = function(e) {
+
+            var date = new Date(e.date);
+            return date<currentDate;
+        }
         //$scope.events = GEvent.query()
         GEvent.query({},function(events) {
             events.forEach(function(e) {

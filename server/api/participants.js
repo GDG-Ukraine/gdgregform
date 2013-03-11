@@ -32,10 +32,14 @@ app.post('/api/participants', function (req, res){
   .success(function(p) {
     var addToEvent = function(p) {
 	   // add to event
-	   models.participations.find({ where: {googler_id:p.id,event_id:req.body.event}}).success(function(np) {
-		if (np==null)  models.participations.create({googler_id:p.id,event_id:req.body.event});
-           });
-        };
+
+       var fields = JSON.stringify(req.body.fields);
+	   models.participations.find({ where: {googler_id:p.id,event_id:req.body.event}})
+        .success(function(np) {
+		    if (np==null)  models.participations.create({googler_id:p.id,event_id:req.body.event, fields: fields});
+            else np.updateAttributes({fields: fields});
+        });
+       };
 	var saved = function(p) {
 		addToEvent(p);
 		res.send(p);

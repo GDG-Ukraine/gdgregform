@@ -26,6 +26,18 @@ angular.module('gdgorgua')
             $location.path('/events/' + id);
         }
     })
+    .factory('EventsFielder', function() {
+        return function($scope) {
+           $scope.addField = function() {
+               if (!$scope.e.fields) $scope.e.fields = [];
+               $scope.e.fields.push({});
+           }
+           $scope.deleteField = function(field) {
+              var i = $scope.e.fields.indexOf(field);
+              if (i>=0) $scope.e.fields.splice(i,1);
+           }
+        };
+    })
 
 
     .controller('EventsCreateCtrl', function ($scope, $location, GEvent) {
@@ -38,7 +50,8 @@ angular.module('gdgorgua')
     })
 
 
-    .controller('EventsEditCtrl', function ($scope, $location, $routeParams, GEvent, $http,Participant,$window, $filter) {
+    .controller('EventsEditCtrl', function ($scope, $location, $routeParams, GEvent, $http,Participant,$window, $filter, EventsFielder) {
+        EventsFielder($scope);
         var self = this;
         $scope.editing = true;
         $scope.tab = 'info';
@@ -92,3 +105,4 @@ angular.module('gdgorgua')
         );
         return GEvent;
     });
+

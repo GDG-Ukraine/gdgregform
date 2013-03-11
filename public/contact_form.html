@@ -168,6 +168,16 @@
 		                <textarea placeholder="Some comments" tabindex="18" ng-model="user.additional_info"></textarea>
 		            </label>
 		        </div>
+                <% var fields = event.fields?JSON.parse(event.fields):[] %>
+                <% for(var n in fields) {%>
+                    <div>
+                        <label>
+                            <span><%= fields[n].title %></span>
+                            <input type="text" ng-model="fields.<%= fields[n].name %>">
+                        </label>
+                    </div>
+                <% } %>
+
 			<div ng-show="showOk" class="alert alert-success">
 				Your application was saved. See you on event!
 			</div>

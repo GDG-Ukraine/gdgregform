@@ -55,11 +55,11 @@ angular.module('gdgorgua',[])
 	        var uid = r.data.uid;
 	        if ($window.localStorage) $window.localStorage.setItem('user', JSON.stringify($scope.user));
             if (GoogleEvent && GoogleEvent.url) {
-                $window.location.href = GoogleEvent.url;
+                 $window.location.href = GoogleEvent.url;
             }
        }
     } 
 
-    $http.post('api/participants', {user: $scope.user, event: event}).then(savedCb, savedCb);
+    $http.post('api/participants', {user: $scope.user, event: event, fields: $scope.fields}).then(savedCb, savedCb);
   }
 });

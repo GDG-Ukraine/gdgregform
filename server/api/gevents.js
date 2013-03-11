@@ -9,6 +9,7 @@ app.get('/api/events/:id', function (req, res) {
     if (!auth.check(req,res)) return;
     if (!req.params.id) return res.send("Not found");
     models.gevents.find(req.params.id).success(function (e) {
+        if (e.fields) e.fields = JSON.parse(e.fields);
         e.getParticipants().success(function(ps) {
                 var newE = db.copySqObject(e);
                 newE.participants = ps;
@@ -19,11 +20,13 @@ app.get('/api/events/:id', function (req, res) {
 // create 
 app.post('/api/events', function (req, res){
   if (!auth.check(req,res)) return;
+  if (req.body.fields) req.body.fields = JSON.stringify(req.body.fields);
   models.gevents.create(req.body).success(function(p) { res.send(p);}).error(app.onError(res));
 });
 // update
 app.put('/api/events/:id', function (req, res){
   if (!auth.check(req,res)) return;
+  if (req.body.fields) req.body.fields = JSON.stringify(req.body.fields);
   models.gevents.find(req.params.id).success(function (p) { 
 	p.updateAttributes(req.body)
 	  .success(function(p) { res.send(p);}).error(app.onError(res));

@@ -21,9 +21,14 @@
             <img id="logo" src="images/logo.png" alt="logo">
             <h1>Registration to <%= event.title %> was closed</h1>
 
-                <h3>Sorry, but registration to this event was already closed
-
+                <h3>Sorry, but registration to this event was already closed. You can <a href="<%= event.url %>">check event details</a>.
                 </h3>
+                Please consider visiting our next events:
+                <ul>
+                <% for (var n in events) { %>
+                    <li><a href="<%= events[n].url %>" target="_blank"><%= events[n].title %></a> <%= events[n].date %></li>
+                <% } %>
+                </ul>
             </div>
      </div>
  </div>

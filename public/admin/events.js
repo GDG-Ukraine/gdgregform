@@ -40,7 +40,8 @@ angular.module('gdgorgua')
     })
 
 
-    .controller('EventsCreateCtrl', function ($scope, $location, GEvent) {
+    .controller('EventsCreateCtrl', function ($scope, $location, GEvent,EventsFielder) {
+        EventsFielder($scope);
         $scope.editing = false;
         $scope.save = function () {
             GEvent.save($scope.e, function (e) {
@@ -53,14 +54,28 @@ angular.module('gdgorgua')
     .controller('EventsEditCtrl', function ($scope, $location, $routeParams, GEvent, $http,Participant,$window, $filter, EventsFielder) {
         EventsFielder($scope);
         var self = this;
+
         $scope.editing = true;
         $scope.tab = 'info';
 
+        $scope.keys = function(obj) {
+            var r = 0;
+            for (var k in obj) r++;
+            return r;
+        }
+
+
+
         if ($window.sessionStorage) {
             try {
+                $scope.tab =  $window.sessionStorage.getItem('gdgeventsTab');
+                if (!$scope.tab) $scope.tab = 'info';
                 $scope.e = JSON.parse($window.sessionStorage.getItem('gdgevent'+$routeParams.eventId));
             } catch(err) {};
         }
+        $scope.$watch('tab', function(tab) {
+            if ($window.sessionStorage) $window.sessionStorage.setItem('gdgeventsTab', tab);
+        });
         $scope.refresh = function() {
             $scope.loading = true;
             GEvent.get({id: $routeParams.eventId}, function (e) {
@@ -69,9 +84,61 @@ angular.module('gdgorgua')
                 e.closereg = $filter('date')(e.closereg,'yyyy-MM-dd');
                 self.original = e;
                 $scope.e = new GEvent(self.original);
+
                 $window.sessionStorage.setItem('gdgevent'+$routeParams.eventId, JSON.stringify(e));
-        });
+
+            });
         };
+        $scope.filterEvent = function(p) {
+           if ($scope.eFilter == "all") return true;
+           if ($scope.eFilter == "approved") return $scope.accepted[p.id];
+           else return !$scope.accepted[p.id]
+        }
+        $scope.eFilter = "all";
+        $scope.toAccept = {};
+        $scope.accepted = {};
+
+        $scope.$watch('e.registrations', function(regs) {
+           var r = {};
+           for (var i in regs)
+            if (regs[i].accepted) r[regs[i].googler_id] = true;
+           $scope.accepted = r;
+        });
+
+
+        $scope.$watch('toAccept', function(v) {
+           var r = [];
+           for(var k in v)
+            if (v[k]) r.push(k);
+           $scope.toAcceptArray = r;
+           $scope.allSelected = r.length == ($scope.keys($scope.e.registrations)-$scope.keys($scope.accepted));
+        },true);
+
+
+        $scope.approve = function() {
+            if ($scope.toAcceptArray.length == 0) return;
+            $scope.approving = true;
+
+            $http.post('/api/events/'+$routeParams.eventId+'/approve',{participants:$scope.toAcceptArray})
+                .success(function() {
+                    $scope.approving = false;
+                    $scope.toAcceptArray.forEach(function(p) {
+                        $scope.accepted[p] = true;
+                    });
+                    $scope.toAccept = {};
+                    $scope.allSelected = false;
+                    $scope.refresh();
+                });
+        };
+
+        $scope.selectAll = function() {
+            $scope.toAccept = {};
+            for(var i in $scope.e.registrations) {
+                if (!$scope.e.registrations[i].accepted) $scope.toAccept[$scope.e.registrations[i].googler_id] = $scope.allSelected;
+            }
+        }
+
+
         $scope.refresh();
 
         $scope.isClean = function () {
@@ -93,6 +160,8 @@ angular.module('gdgorgua')
         $scope.show = function(id) {
             $location.path('/participants/'+id);
         }
+
+
 
 
     })

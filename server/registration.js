@@ -18,8 +18,11 @@ app.get(/\/events\/(.*?)\/(.*)/, function(req,res,next) {
   if (req.params[1] == 'register') {
      models.gevents.find(eventId).success(function(e) {
         if (!e) res.end("No such event")
-        else if (e.closereg && (new Date(e.closereg))<(new Date()))
-            res.render('regclosed.html', { event: e});
+        else if (e.closereg && (new Date(e.closereg))<(new Date())) {
+            models.gevents.findAll({order:'date', limit: 5, where: ["date > NOW()","closereg > NOW()"] }).success(function(events) {
+                res.render('regclosed.html', { event: e, events: events});
+            });
+        }
         else res.render('contact_form.html', {event: e});
      });
   } else s(req,res,next);

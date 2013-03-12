@@ -1,5 +1,7 @@
 var everyauth = require('everyauth');
 
+var authMode = require('../config.json').auth;
+
 everyauth.debug = false;
 
 var usersById = {};
@@ -18,6 +20,7 @@ var allowedUsers = [
 ];
 
 exports.restrictAdmin = function(req, res, next) {
+    if (authMode == "none") return next();
     if (req.path.substring(0,6)=='/admin') {
         //console.log(req.user);
         if (!req.user) {
@@ -61,12 +64,14 @@ everyauth.everymodule.handleLogout( function (req, res) {
 
 
 exports.check = function(req,res) {
+    if (authMode == "none") return true;
     var allowed = req.user && allowedUsers.indexOf(req.user.email)>-1;
     if (!allowed) res.end("Not authorized");
     return allowed;
 };
 
 exports.setup = function(app) {
+  if (authMode == 'none') return;
   app.get('/auth', function(req,res) {
     req.session.redirectTo = req.header('Referrer');
     res.redirect("/auth/google");

@@ -88,7 +88,7 @@ app.post('/api/events/:id/approve', function (req, res){
             for (var i = 0;i<regs.length;i++) {
                 if (!regs[i].approved && req.body.participants.indexOf(regs[i].googler_id+"")>-1) {
                     regs[i].updateAttributes({accepted: true});
-                    if (sendEmail) card.sendEmail(regs[i].id,req.protocol + "://" + req.get('host')+"/card/")
+                    if (sendEmail) card.sendEmail(regs[i].id,req.protocol + "://" + req.get('host')+"/card/",req.user);
                 }
 
             }

@@ -54,12 +54,24 @@ var prepareData = function(id, url, cb) {
 
 var mailConfig = require('../config.json').mail;
 
-exports.sendEmail = function(id,url) {
+exports.sendEmail = function(id,url,sender) {
     prepareData(id,url,function(locals) {
         var html = ejs.render(fs.readFileSync('./public/card.html')+"",locals);
-
+        var config = {
+            host:"smtp.gmail.com",
+            secureConnection: true,
+            port: 465,
+            auth: {XOAuth2: {
+                user: sender.email,
+                clientId: "655913597185.apps.googleusercontent.com",
+                clientSecret: "Qp_OB2nlEhKzaaFeQnwRVMS7",
+                refreshToken: sender.refreshToken,
+                accessToken: sender.accessToken,
+                timeout: 3600
+            }}
+        };
         juice.juiceContent(html,{url:url+"/"}, function(err,html) {
-            var smtpTransport = nodemailer.createTransport("SMTP", mailConfig);
+            var smtpTransport = nodemailer.createTransport("SMTP",/* mailConfig*/config);
 
             html = html.replace(/&amp;/g,'&');
 

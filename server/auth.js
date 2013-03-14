@@ -25,7 +25,7 @@ exports.restrictAdmin = function(req, res, next) {
         //console.log(req.user);
         if (!req.user) {
            req.session.redirectTo = req.url;
-
+           req.session.adminRequest = true;
            //   console.log(req);
            console.log("saving referer", req.session.redirectTo);
            res.redirect('/auth/google');
@@ -44,10 +44,18 @@ everyauth.google
     .appId("655913597185.apps.googleusercontent.com")
     .appSecret("Qp_OB2nlEhKzaaFeQnwRVMS7")
     //.scope('https://www.googleapis.com/auth/userinfo.profile')
-    .scope('https://www.googleapis.com/auth/userinfo#email https://www.googleapis.com/auth/userinfo.profile')
+    //.scope('https://www.googleapis.com/auth/userinfo#email https://www.googleapis.com/auth/userinfo.profile')
+    .scope(function(req,res) {
+        var scope = "https://www.googleapis.com/auth/userinfo#email https://www.googleapis.com/auth/userinfo.profile";
+        if (req.session.adminRequest)
+            scope = scope + " https://mail.google.com/";
+        return scope;
+    })
     .findOrCreateUser( function (sess, accessToken, extra, googleUser) {
         googleUser.refreshToken = extra.refresh_token;
         googleUser.expiresIn = extra.expires_in;
+        googleUser.accessToken = accessToken;
+        console.log("extra:", extra);
         return usersById[googleUser.id] || (usersById[googleUser.id] =  googleUser);
     })
     .redirectPath(function(req,res) {

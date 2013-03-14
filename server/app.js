@@ -7,6 +7,11 @@ var application_root = __dirname,
 
 var app = exports.app = express();
 
+
+process.on('uncaughtException', function (err) {
+    console.error(err);
+});
+
 app.configure(function () {
   app.use(express.bodyParser());
   app.use(express.methodOverride());

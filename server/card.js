@@ -44,13 +44,30 @@ var prepareData = function (id, url, cb) {
                         }
                     }
 
-                    var qrData = url + "/card/" + secret.crypt(reg.id + "");
+                    //var qrData = url + "/card/" + secret.crypt(reg.id + "");
+                    var qrData = vCardText(user,reg,url + "/card/" + secret.crypt(reg.id + ""));
+                    console.log("qr:"+qrData);
                     var locals = {fields: fields, event: event, reg: reg, qrdata: qrData, user: user};
                     cb(locals);
                 });
             })
         });
 };
+
+var querystring = require("querystring");
+var vCardText = function(user,reg,url) {
+    var text =
+        "BEGIN:VCARD\n"+
+        "VERSION:2.1\n"+
+        "N:"+user.name+";"+user.surname+"\n"+
+        "EMAIL;TYPE=INTERNET:"+user.email+"\n"+
+        "NOTE:REG:"+reg.id+" EV:"+reg.event_id+"\n"+
+        "URL:"+url+"\n"+
+        "END:VCARD";
+    //return querystring.stringify(text);
+    return encodeURIComponent(text);
+
+}
 
 var mailConfig = require('../config.json').mail;
 exports.createMailer = function (sender) {

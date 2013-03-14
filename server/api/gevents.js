@@ -1,6 +1,7 @@
 var models = require('../models'),
     auth = require('../auth'),
     Sequelize = require('sequelize'),
+    secret = require('../secret');
     db = require('../db');
 
 module.exports = function(app) {
@@ -19,6 +20,13 @@ app.get('/api/events/:id', function (req, res) {
         .success(function(results) {
             var ps = results[0];
             var regs = results[1];
+            for (var n=0;n<regs.length;n++) {
+                regs[n] = db.copySqObject(regs[n]);
+                regs[n].cardUrl = secret.crypt(regs[n].id+"");
+                //console.dir(regs[n]);
+                //console.log(r);
+            }
+
             var newE = db.copySqObject(e);
             newE.participants = ps;
             newE.registrations = regs;
@@ -63,16 +71,25 @@ app.get('/api/events', function (req, res) {
   })
 });
 
+var emailAuth = require('../../config.json').mail;
+var sendEmail = function(id) {
+
+}
 //approve
+var card = require('../card.js');
+
 app.post('/api/events/:id/approve', function (req, res){
     if (!auth.check(req,res)) return false;
     if (!req.body.participants) return res.send(400, "Bad Request - no participants to approve");
+    var sendEmail = req.body.sendEmail;
     models.participations.findAll({ where: {event_id:req.params.id}})
         .success(function(regs) {
 
             for (var i = 0;i<regs.length;i++) {
-                if (!regs[i].approved && req.body.participants.indexOf(regs[i].googler_id+"")>-1)
+                if (!regs[i].approved && req.body.participants.indexOf(regs[i].googler_id+"")>-1) {
                     regs[i].updateAttributes({accepted: true});
+                    if (sendEmail) card.sendEmail(regs[i].id,req.protocol + "://" + req.get('host')+"/card/")
+                }
 
             }
             res.send({ok:true});

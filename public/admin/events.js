@@ -119,7 +119,7 @@ angular.module('gdgorgua')
             if ($scope.toAcceptArray.length == 0) return;
             $scope.approving = true;
 
-            $http.post('/api/events/'+$routeParams.eventId+'/approve',{participants:$scope.toAcceptArray})
+            $http.post('/api/events/'+$routeParams.eventId+'/approve',{participants:$scope.toAcceptArray,sendEmail: $scope.sendEmail})
                 .success(function() {
                     $scope.approving = false;
                     $scope.toAcceptArray.forEach(function(p) {
@@ -159,6 +159,16 @@ angular.module('gdgorgua')
         };
         $scope.show = function(id) {
             $location.path('/participants/'+id);
+        }
+
+        $scope.showCard = function(id) {
+            var reg;
+            console.log("here");
+            $scope.e.registrations.forEach(function(r) { if (r.googler_id==id) reg = r;})
+            console.log(reg);
+            if (reg) {
+                $window.open("/card/"+reg.cardUrl);
+            }
         }
 
 

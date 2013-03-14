@@ -2,7 +2,13 @@ module.exports = function(app) {
 
 var application_root = __dirname;
 var path = require('path'),
-    models = require('./models');
+    db = require('./db'),
+    models = require('./models'),
+    secret = require('./secret'),
+    ejs = require('ejs'),
+    fs = require('fs'),
+    juice = require('juice')
+    ;
 
 // for static serving
 var s = require('express').static(path.join(application_root, "public"));
@@ -28,4 +34,4 @@ app.get(/\/events\/(.*?)\/(.*)/, function(req,res,next) {
   } else s(req,res,next);
 });
 
-}
+};

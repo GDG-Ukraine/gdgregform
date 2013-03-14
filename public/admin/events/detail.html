@@ -92,15 +92,24 @@
             <td>
                 <button class='btn btn-danger' disabled><i class="icon-trash"></i></button>
                 <button class='btn'><span ng-click='show(p.id)'><i class='icon-user'></i></span></button>
+                <button class='btn'><span ng-click='showCard(p.id)'><i class="icon-credit-card"></i></span></button>
             </td>
         </tr>
         </tbody>
     </table>
 
-    <button class='btn btn-green' ng-show='toAcceptArray.length >0' ng-click='approve()' ng-disabled="approving">
-        Approve {{toAcceptArray.length}} applications
-        <i class="icon-spinner icon-spin" ng-show="approving"></i>
-    </button>
+    <div ng-show='toAcceptArray.length >0' class="control-group">
+      <label class="control-label">
+            <input type="checkbox" ng-model='sendEmail' ng-init="sendEmail= true" >Send email
+      </label>
+      <div class="controls">
+        <button class='btn btn-info' ng-click='approve()' ng-disabled="approving">
+            Approve {{toAcceptArray.length}} application<span ng-show='toAcceptArray.length>1'>s</span>
+            <i class="icon-spinner icon-spin" ng-show="approving"></i>
+        </button>
+      </div>
+
+    </div>
 </div>
 
 <div class='' ng-show="editing && tab=='fields'">

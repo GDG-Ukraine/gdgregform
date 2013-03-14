@@ -39,6 +39,7 @@ app.onError = function(res) {
 
 auth.setup(app);
 require('./registration')(app);
+require('./card').setup(app);
 
 require("fs").readdirSync("./server/api").forEach(function(file) {
   require("./api/" + file)(app);

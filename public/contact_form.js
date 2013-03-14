@@ -20,7 +20,7 @@ angular.module('gdgorgua',[])
           email: GoogleUser.email,
           gplus: GoogleUser.link
       });
-      console.log(GoogleUser);
+
       $scope.picture = GoogleUser.picture;
       $scope.fromGoogle = true;
   } else $scope.fromGoogle = false;
@@ -29,7 +29,6 @@ angular.module('gdgorgua',[])
     if (parts[0] == '') parts.shift();
     if (parts[0] == 'events') parts.shift();
     var event = parts[0];
-    console.log('event',event);
 
 
   $scope.submit = function() {

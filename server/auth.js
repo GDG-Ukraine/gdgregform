@@ -22,11 +22,9 @@ var allowedUsers = [
 exports.restrictAdmin = function(req, res, next) {
     if (authMode == "none") return next();
     if (req.path.substring(0,6)=='/admin') {
-        //console.log(req.user);
         if (!req.user) {
            req.session.redirectTo = req.url;
            req.session.adminRequest = true;
-           //   console.log(req);
            console.log("saving referer", req.session.redirectTo);
            res.redirect('/auth/google');
         } else {
@@ -55,12 +53,10 @@ everyauth.google
         googleUser.refreshToken = extra.refresh_token;
         googleUser.expiresIn = extra.expires_in;
         googleUser.accessToken = accessToken;
-        console.log("extra:", extra);
         return usersById[googleUser.id] || (usersById[googleUser.id] =  googleUser);
     })
     .redirectPath(function(req,res) {
         if (req.session.redirectTo) return req.session.redirectTo;
-        //console.log(req.session.backUrl);
         console.log("Can't find redirection path");
         return "/admin/admin.html";
     });

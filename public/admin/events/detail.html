@@ -73,7 +73,7 @@
         <thead>
         <tr>
             <th>
-                <input ng-disabled="keys(accepted)==e.participants.length" type="checkbox" ng-show="eFilter!='approved'" ng-model='allSelected' ng-click='selectAll()'> Approved</th>
+                <input ng-disabled="keys(accepted)==e.participants.length ||approving" type="checkbox" ng-show="eFilter!='approved'" ng-model='allSelected' ng-click='selectAll()'> Approved</th>
             <th>Name</th>
             <th>Surname</th>
             <th>e-mail</th>
@@ -83,7 +83,7 @@
         <tbody>
         <tr ng-repeat="p in e.participants | filter:filterEvent | filter:search | orderBy:'title'" class="clickable">
             <td>
-                <input type="checkbox" ng-model='toAccept[p.id]' ng-hide='accepted[p.id]'>
+                <input type="checkbox" ng-model='toAccept[p.id]' ng-hide='accepted[p.id]' ng-disabled="approving">
                 <i class="icon-ok" ng-show='accepted[p.id]'></i>
             </td>
             <td>{{p.name}}</td>
@@ -97,10 +97,13 @@
         </tr>
         </tbody>
     </table>
-
+    <div class="alert alert-error" ng-show="sendingFailed">
+        <button type="button" class="close" data-dismiss="alert" ng-click="sendingFailed = false">&times;</button>
+        Something happen while approving, so some application could be not approved or notifications not sent.
+    </div>
     <div ng-show='toAcceptArray.length >0' class="control-group">
       <label class="control-label">
-            <input type="checkbox" ng-model='sendEmail' ng-init="sendEmail= true" >Send email
+            <input type="checkbox" ng-model='sendEmail' ng-init="sendEmail= true"  ng-disabled="approving">Send email
       </label>
       <div class="controls">
         <button class='btn btn-info' ng-click='approve()' ng-disabled="approving">

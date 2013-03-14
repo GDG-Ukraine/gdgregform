@@ -10,6 +10,8 @@ var app = exports.app = express();
 
 process.on('uncaughtException', function (err) {
     console.error(err);
+    if (err.stack) console.error(err.stack);
+
 });
 
 app.configure(function () {

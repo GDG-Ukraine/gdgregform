@@ -120,13 +120,18 @@ angular.module('gdgorgua')
             $scope.approving = true;
 
             $http.post('/api/events/'+$routeParams.eventId+'/approve',{participants:$scope.toAcceptArray,sendEmail: $scope.sendEmail})
-                .success(function() {
+                .success(function(res) {
+                    var success = res.ok;
                     $scope.approving = false;
-                    $scope.toAcceptArray.forEach(function(p) {
-                        $scope.accepted[p] = true;
-                    });
-                    $scope.toAccept = {};
-                    $scope.allSelected = false;
+                    if (success) {
+                        $scope.toAcceptArray.forEach(function(p) {
+                            $scope.accepted[p] = true;
+                        });
+                        $scope.toAccept = {};
+                        $scope.allSelected = false;
+                    }
+                    $scope.sendingFailed = !success;
+
                     $scope.refresh();
                 });
         };
@@ -163,9 +168,7 @@ angular.module('gdgorgua')
 
         $scope.showCard = function(id) {
             var reg;
-            console.log("here");
             $scope.e.registrations.forEach(function(r) { if (r.googler_id==id) reg = r;})
-            console.log(reg);
             if (reg) {
                 $window.open("/card/"+reg.cardUrl);
             }

@@ -9,8 +9,9 @@ var app = exports.app = express();
 
 
 process.on('uncaughtException', function (err) {
-    console.error(err);
+
     if (err.stack) console.error(err.stack);
+    else console.error(err);
 
 });
 
@@ -40,7 +41,7 @@ app.configure(function () {
 app.onError = function(res) {
   return function(err) { 
 	console.log(err);
-	res.send(err);
+	res.send(500,err);
   }
 }
 

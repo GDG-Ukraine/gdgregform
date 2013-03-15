@@ -44,7 +44,7 @@ app.post('/api/participants', function (req, res){
 		addToEvent(p);
 		res.send(p);
 	};
-	if (p == null) models.participants.create(req.body.user).success(saved);
+	if (p == null) models.participants.create(req.body.user).success(saved).error(app.onError(res));
   	  else p.updateAttributes(req.body.user).success(saved).error(app.onError(res));
   }).error(app.onError(res));
 });

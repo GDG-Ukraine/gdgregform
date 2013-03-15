@@ -100,7 +100,13 @@ exports.createMailer = function (sender) {
                         subject: "✔ Registration confirmation to " + locals.event.title, // Subject line
                         generateTextFromHTML: true,
                         forceEmbeddedImages: true,
-                        html: html // html body
+                        html: html,
+                        attachments: [
+                            {
+                                filePath: 'http://chart.googleapis.com/chart?chs=400x400&cht=qr&chl='+locals.qrdata+'&choe=UTF-8',
+                                fileName: 'RegistrationQR.png'
+                            }
+                        ]
                     };
                     smtpTransport.sendMail(mailOptions, function (error, response) {
                         if (error) {

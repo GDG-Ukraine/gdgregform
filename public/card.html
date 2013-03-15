@@ -26,6 +26,9 @@ td {
     font-size: 2em;
     font-family: monospace;
 }
+div {
+    text-align: justify;
+}
     </style>
 </head>
 <body>
@@ -34,7 +37,11 @@ td {
         <% if (!reg.accepted) { %>
         <tr><td class="notapproved" colspan="3">Registration is not approved yet</td></tr>
         <% } %>
-        <tr><td colspan="2" class="header"><h3>Registration to "<%= event.title %>"</h3></td>
+        <tr>
+        <td colspan="2" class="header">
+            <h3>Registration to "<%= event.title %>"</h3>
+            <div><%= event.desc %></div>
+        </td>
             <td class="img" rowspan="<%= fieldsCount %>"><img src="http://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=<%= qrdata %>&choe=UTF-8" /></td>
         </tr>
         <% for(var field in fields) { %>

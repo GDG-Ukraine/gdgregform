@@ -111,7 +111,8 @@ angular.module('gdgorgua')
            for(var k in v)
             if (v[k]) r.push(k);
            $scope.toAcceptArray = r;
-           $scope.allSelected = r.length == ($scope.keys($scope.e.registrations)-$scope.keys($scope.accepted));
+           if ($scope.e)
+            $scope.allSelected = r.length == ($scope.keys($scope.e.registrations)-$scope.keys($scope.accepted));
         },true);
 
 

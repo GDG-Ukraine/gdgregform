@@ -125,6 +125,17 @@ module.exports = function (app) {
             });
         return true;
     });
+    app.post('/api/events/:id/resend', function (req, res) {
+        if (!auth.check(req, res)) return false;
+        if (!req.body.id) return res.send(400, "Bad Request - no participation to send");
+        var sender = card.createMailer(req.user);
+        models.participations.find({ where: {event_id: req.params.id, googler_id:req.body.id}})
+            .success(function (reg) {
+                sender.sendEmail(reg.id, req.protocol + "://" + req.get('host'), function(result){
+                    res.send({ok:result});
+                });
+            });
+    });
 
 
 }

@@ -175,9 +175,22 @@ angular.module('gdgorgua')
         }
 
 
-
-
     })
+    .controller('notificationResendCtrl',function($scope,$http,$routeParams){
+        $scope.resend = function(id) {
+            var reg;
+            $scope.sending = true;
+            $scope.e.registrations.forEach(function(r) { if (r.googler_id==id) reg = r;})
+            if (reg) {
+                $http.post('/api/events/' + $routeParams.eventId+'/resend',{id:id})
+                    .then(function(){
+                        $scope.sending = false;
+                        $scope.dismiss();
+                    })
+            }
+        }
+    })
+
 
     .factory('GEvent', function ($resource) {
         var GEvent = $resource('/api/events/:id',

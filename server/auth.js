@@ -16,7 +16,8 @@ var allowedUsers = [
     'anastasiaafonina@gmail.com',
     'v.y.ivanov@gmail.com',
     'svyatoslav@sydorenko.org.ua',
-    'oleh.zasadnyy@gmail.com'
+    'oleh.zasadnyy@gmail.com',
+    'mazur.roman@gmail.com',
 ];
 
 exports.restrictAdmin = function(req, res, next) {

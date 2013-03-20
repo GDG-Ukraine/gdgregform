@@ -22,7 +22,7 @@ angular.module('gdgorgua')
 .controller('ParticipantsCreateCtrl', function ($scope, $location, Participant) {
   $scope.save = function() {
     Participant.save($scope.p, function(participant) {
-      $location.path('/edit/' + participant.id);
+      $location.path('/participants/' + participant.id);
     });
   }
 })
@@ -48,13 +48,13 @@ angular.module('gdgorgua')
 
   $scope.destroy = function() {
     self.original.$remove(function() {
-      $location.path('/list');
+      $location.path('/participants/');
     });
   };
 
   $scope.save = function() {
     $scope.p.$update(function() {
-      $location.path('/');
+      $location.path('/participants/');
     });
   };
   $scope.back = function() {

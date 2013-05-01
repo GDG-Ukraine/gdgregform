@@ -23,6 +23,9 @@ app.get(/\/events\/(.*?)\/(.*)/, function(req,res,next) {
   else
   if (req.params[1] == 'register') {
      models.gevents.find(eventId).success(function(e) {
+
+        if (!e.logo) e.logo = "images/logo.png";
+
         if (!e) res.end("No such event")
         else if (e.closereg && (new Date(e.closereg))<(new Date())) {
             models.gevents.findAll({order:'date', limit: 5, where: ["date > NOW()","closereg > NOW()"] }).success(function(events) {

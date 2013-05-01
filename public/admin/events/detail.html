@@ -59,6 +59,14 @@
             <button type="button" class="btn" data-toggle="datepicker"><i class="icon-calendar"></i></button>
         </div>
     </div>
+
+    <div class="control-group " ng-class="{error: myForm.logo.$invalid}">
+         <label class="control-label">Event logo</label>
+         <div class="controls">
+             <input type="text" name="logo" ng-model="e.logo" placeholder="images/logo.png">
+             <img ng-show="e.logo" ng-src="{{e.logo}}">
+         </div>
+    </div>
 </div>
 
     <script type="text/ng-template" id="confirmSend.html">

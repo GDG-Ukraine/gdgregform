@@ -31,14 +31,40 @@ angular.module('gdgorgua')
            $scope.addField = function() {
                if (!$scope.e.fields) $scope.e.fields = [];
                $scope.e.fields.push({});
-           }
+           };
            $scope.deleteField = function(field) {
               var i = $scope.e.fields.indexOf(field);
               if (i>=0) $scope.e.fields.splice(i,1);
+           };
+           $scope.cities = ['cherkassy',
+               'chernihiv',
+               'dnipropetrovsk',
+               'donetsk',
+               'kharkiv',
+               'konotop',
+               'kyiv',
+               'luhansk',
+               'lviv',
+               'mykolaiv',
+               'odessa',
+               'vinnytsia'];
+           $scope.cityLogo = function(city) {
+               return 'http://gdg.org.ua/img/logos/gdg_'+city+'.png';
+           }
+           $scope.checkCity = function(city, url) {
+               return url==$scope.cityLogo(city);
+           };
+           $scope.noCity = function(url) {
+               for(var city in $scope.cities)
+                    if ($scope.checkCity($scope.cities[city],url)) return false;
+
+               return true;
+           };
+           $scope.cityName = function(city) {
+               return city[0].toUpperCase()+city.substring(1);
            }
         };
     })
-
 
     .controller('EventsCreateCtrl', function ($scope, $location, GEvent,EventsFielder) {
         EventsFielder($scope);

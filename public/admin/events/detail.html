@@ -63,8 +63,12 @@
     <div class="control-group " ng-class="{error: myForm.logo.$invalid}">
          <label class="control-label">Event logo</label>
          <div class="controls">
-             <input type="text" name="logo" ng-model="e.logo" placeholder="images/logo.png">
-             <img ng-show="e.logo" ng-src="{{e.logo}}">
+             <div class="btn-group">
+                 <button ng-repeat='city in cities' class="btn" ng-class='{active:checkCity(city,e.logo)}' ng-click="e.logo=cityLogo(city)">{{cityName(city)}}</button>
+                 <button class="btn" ng-class='{active: noCity(e.logo)}'>Other</button>
+             </div> <br>
+             <input type="text" class="input-xxlarge" name="logo" ng-model="e.logo" placeholder="images/logo.png">
+             <img ng-show="e.logo" ng-src="{{e.logo}}" style='height:24px'>
          </div>
     </div>
 </div>

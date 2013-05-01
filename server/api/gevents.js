@@ -23,8 +23,6 @@ module.exports = function (app) {
                     for (var n = 0; n < regs.length; n++) {
                         regs[n] = db.copySqObject(regs[n]);
                         regs[n].cardUrl = secret.crypt(regs[n].id + "");
-                        //console.dir(regs[n]);
-                        //console.log(r);
                     }
 
                     var newE = db.copySqObject(e);
@@ -56,8 +54,8 @@ module.exports = function (app) {
 // delete
     app.delete('/api/events/:id', function (req, res) {
         if (!auth.check(req, res)) return;
-        models.gevents.find(req.params.id).success(function (p) {
-            p.destroy()
+        models.gevents.find(req.params.id).success(function (event) {
+            event.destroy()
                 .success(function (p) {
                     models.participations.findAll({where: {event_id: req.params.id}}).success(function (regs) {
                         regs.forEach(function (reg) {
@@ -72,9 +70,9 @@ module.exports = function (app) {
 // list
     app.get('/api/events', function (req, res) {
         if (!auth.check(req, res)) return;
-        models.gevents.findAll().success(function (participants) {
-            res.send(participants);
-        })
+        models.gevents.findAll().success(function (events) {
+            res.send(events);
+        }).error(app.onError(res));
     });
 
     var emailAuth = require('../../config.json').mail;

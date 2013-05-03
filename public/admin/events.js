@@ -170,13 +170,19 @@ angular.module('gdgorgua')
         };
         $scope.show = function(id) {
             $location.path('/participants/'+id);
-        }
+        };
 
         $scope.showCard = function(id) {
             var reg;
-            $scope.e.registrations.forEach(function(r) { if (r.googler_id==id) reg = r;})
+            $scope.e.registrations.forEach(function(r) { if (r.googler_id==id) reg = r;});
             if (reg) {
                 $window.open("/card/"+reg.cardUrl);
+            }
+        };
+        $scope.openReportParticipants = function() {
+            $window.open('events/participants.html');
+            $window.getEventData = function(cb) {
+                cb($scope.e);
             }
         }
 

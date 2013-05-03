@@ -8,10 +8,9 @@
     </div>
 
     <ul class="nav nav-tabs" ng-show="editing">
-        <li ng-class="{active: tab == 'info'}"><a ng-click="tab='info'">Information</a></li>
-        <li ng-class="{active: tab == 'part'}"><a ng-click="tab='part'">Participants ({{ e.participants.length}})</a></li>
-        <li ng-class="{active: tab == 'fields'}"><a ng-click="tab='fields'">Form fields</a></li>
-
+        <li ng-class="{active: tab == 'info'}"><a ng-click="tab='info'"><i class="icon-magic"></i> Information</a></li>
+        <li ng-class="{active: tab == 'part'}"><a ng-click="tab='part'"><i class="icon-group"></i> Participants ({{ e.participants.length}})</a></li>
+        <li ng-class="{active: tab == 'fields'}"><a ng-click="tab='fields'"><i class="icon-tasks"></i> Form fields</a></li>
     </ul>
 
 <form name="myForm" class="form-horizontal" >
@@ -113,9 +112,12 @@
 <div class='' ng-show="editing && tab=='part'">
     <input type="text" ng-model="search" class="search-query" placeholder="Search">
     <div class="btn-group" bs-buttons-radio ng-model="eFilter">
-        <button type="button" class="btn" value="all">All</button>
-        <button type="button" class="btn" value="approved" ng-disabled="keys(accepted)==0">Approved ({{keys(accepted)}})</button>
-        <button type="button" class="btn" value="waiting" ng-disabled="e.participants.length - keys(accepted) == 0">Waiting for approval ({{e.participants.length - keys(accepted)}})</button>
+        <button type="button" class="btn" value="all"><i class="icon-asterisk"></i> All</button>
+        <button type="button" class="btn" value="approved" ng-disabled="keys(accepted)==0"><i class="icon-check"></i> Approved ({{keys(accepted)}})</button>
+        <button type="button" class="btn" value="waiting" ng-disabled="e.participants.length - keys(accepted) == 0"><i class="icon-check-empty"></i> Waiting for approval ({{e.participants.length - keys(accepted)}})</button>
+    </div>
+    <div class="btn-group" >
+        <button type="button" class="btn btn-info" ng-click="openReportParticipants()" ><i class="icon-book"></i> Report</button>
     </div>
     <table class='table'>
         <thead>
@@ -205,11 +207,11 @@
     </script>
     <div class="control-group">
         <div class="controls">
-            <a href="#/" class="btn">Cancel</a>
+            <a href="#/" class="btn"><i class="icon-reply"></i> Cancel</a>
             <button ng-click="save()" ng-disabled="isClean() || myForm.$invalid"
-                    class="btn btn-primary">Save</button>
+                    class="btn btn-primary"><i class="icon-ok"></i> Save</button>
             <button bs-modal="'eventDelete.html'"
-                    ng-show="e.id" class="btn btn-danger">Delete</button>
+                    ng-show="e.id" class="btn btn-danger"><i class="icon-remove"></i> Delete</button>
         </div>
     </div>
 

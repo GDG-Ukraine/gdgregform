@@ -49,7 +49,7 @@ var prepareData = function (id, url, cb) {
 
                     //var qrData = url + "/card/" + secret.crypt(reg.id + "");
                     var qrData = vCardText(user,reg,url + "/card/" + secret.crypt(reg.id + ""));
-                    console.log("qr:"+qrData);
+                   // console.log("qr:"+qrData);
                     var locals = {fields: fields, event: event, reg: reg, qrdata: qrData, user: user};
                     cb(locals);
                 });

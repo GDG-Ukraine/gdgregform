@@ -192,8 +192,6 @@ angular.module('gdgorgua')
                     .then(function(){
                         $scope.sending = false;
                         $scope.dismiss();
-                        $scope.e.registrations.splice($scope.e.registrations.indexOf(reg),1);
-                        $scope.refresh();
                     })
             }
         }
@@ -207,6 +205,8 @@ angular.module('gdgorgua')
                 $http.post('/api/events/' + $routeParams.eventId+'/delete',{id:id})
                     .then(function(){
                         $scope.deleting = false;
+                        $scope.e.registrations.splice($scope.e.registrations.indexOf(reg),1);
+                        $scope.refresh();
                         $scope.dismiss();
                     })
             }

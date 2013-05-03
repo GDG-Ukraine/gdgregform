@@ -89,6 +89,27 @@
 
     </script>
 
+    <script type="text/ng-template" id="confirmDeleteApp.html">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4>Deleting application of {{p.name}} {{p.surname}}</h4>
+        </div>
+        <div class="modal-body">
+            Are you sure you want to delete application of <b>{{p.name}}</b>?
+
+            <div ng-show='accepted[p.id]' class='alert alert-error'>The application is already accepted!</div>
+
+        </div>
+        <div class="modal-footer">
+            <button class="btn cancel" ng-click="dismiss()" ng-disabled='sending'>Cancel</button>
+            <button class="btn btn-primary" ng-click="deleteApp(p.id)" ng-disabled='sending'>
+                <i class="icon-spinner icon-spin" ng-show='deleting'></i> Delete<span ng-show='deleting'>ing...</span></button>
+        </div>
+
+    </script>
+
+
+
 <div class='' ng-show="editing && tab=='part'">
     <input type="text" ng-model="search" class="search-query" placeholder="Search">
     <div class="btn-group" bs-buttons-radio ng-model="eFilter">
@@ -117,7 +138,7 @@
             <td>{{p.surname}}</td>
             <td>{{p.email}}</td>
             <td>
-                <button class='btn btn-danger' disabled><i class="icon-trash"></i></button>
+                <button class='btn btn-danger' ng-controller='notificationDeleteAppCtrl' bs-modal="'confirmDeleteApp.html'"><i class="icon-trash"></i></button>
                 <button class='btn' ng-click='show(p.id)'><i class='icon-user'></i></button>
                 <button class='btn'  ng-click='showCard(p.id)'><i class="icon-credit-card"></i></button>
                 <button class='btn' ng-controller='notificationResendCtrl' bs-modal="'confirmSend.html'"><i class="icon-envelope"></i></button>

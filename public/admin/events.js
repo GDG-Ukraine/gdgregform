@@ -186,11 +186,27 @@ angular.module('gdgorgua')
         $scope.resend = function(id) {
             var reg;
             $scope.sending = true;
-            $scope.e.registrations.forEach(function(r) { if (r.googler_id==id) reg = r;})
+            $scope.e.registrations.forEach(function(r) { if (r.googler_id==id) reg = r;});
             if (reg) {
                 $http.post('/api/events/' + $routeParams.eventId+'/resend',{id:id})
                     .then(function(){
                         $scope.sending = false;
+                        $scope.dismiss();
+                        $scope.e.registrations.splice($scope.e.registrations.indexOf(reg),1);
+                        $scope.refresh();
+                    })
+            }
+        }
+    })
+    .controller('notificationDeleteAppCtrl',function($scope,$http,$routeParams){
+        $scope.deleteApp = function(id) {
+            var reg;
+            $scope.deleting = true;
+            $scope.e.registrations.forEach(function(r) { if (r.googler_id==id) reg = r;});
+            if (reg) {
+                $http.post('/api/events/' + $routeParams.eventId+'/delete',{id:id})
+                    .then(function(){
+                        $scope.deleting = false;
                         $scope.dismiss();
                     })
             }

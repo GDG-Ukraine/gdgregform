@@ -32,15 +32,18 @@ var prepareData = function (id, url, cb) {
                         "additional_info": "Additional"
                     };
                     var fields = {};
-                    for (var f in user) {
-                        if (user[f] && data[f]) fields[data[f]] = user[f];
+                    for (var userN in user) {
+                        if (user[userN] && data[userN]) fields[data[userN]] = user[userN];
                     }
                     if (event.fields && reg.fields) {
-                        var cfields = JSON.parse(event.fields);
-                        var cdata = JSON.parse(reg.fields);
+                        var cfields = event.fields?JSON.parse(event.fields):{};
+                        //console.log("parsing",reg.fields);
+                        // temporary hack:
+                        if (reg.fields && reg.fields[1]=="'") reg.fields = reg.fields.replace(/'/g,'"');
+                        var cdata = reg.fields?JSON.parse(reg.fields):{};
 
-                        for (var f in cfields) {
-                            fields[cfields[f].title] = cdata[cfields[f].name];
+                        for (var fieldN in cfields) {
+                            fields[cfields[fieldN].title] = cdata[cfields[fieldN].name];
                         }
                     }
 
@@ -54,7 +57,7 @@ var prepareData = function (id, url, cb) {
         });
 };
 
-var querystring = require("querystring");
+//var querystring = require("querystring");
 var vCardText = function(user,reg,url) {
     var text =
         "BEGIN:VCARD\n"+
@@ -67,9 +70,9 @@ var vCardText = function(user,reg,url) {
     //return querystring.stringify(text);
     return encodeURIComponent(text);
 
-}
+};
 
-var mailConfig = require('../config.json').mail;
+//var mailConfig = require('../config.json').mail;
 exports.createMailer = function (sender) {
     var config = {
         host: "smtp.gmail.com",

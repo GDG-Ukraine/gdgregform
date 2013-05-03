@@ -8,6 +8,6 @@ module.exports = function(app) {
         if (!auth.check(req,res)) return;
         models.places.findAll().success(function(places) {
             res.send(places);
-        });
+        }).error(app.onError(res));
     });
 };

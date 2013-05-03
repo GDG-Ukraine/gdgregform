@@ -64,6 +64,7 @@
          <label class="control-label">Host</label>
          <div class="controls">
              <select ng-model="e.host_gdg_id" ng-options="place.id as place.name for place in places"></select>
+             <img ng-src="{{logoForPlace(e.host_gdg_id)}}" style="height: 24px">
          </div>
     </div>
 

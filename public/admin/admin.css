@@ -12,11 +12,11 @@
 #spinner {
     padding: 5px;
     margin: 4px;
-    border: solid 1px #F55;
-    box-shadow: 0 0 10px #FAA;
+    border: solid 1px #555;
+    box-shadow: 0 0 10px #AFA;
     border-radius: 7px;
-    background-color: rgba(250,200,200,0.5);
-    width: 220px;
+    background-color: rgba(200,250,200,0.2);
+    width: 320px;
     opacity: 0;
     -webkit-transition: all 0.5s ease-in-out;
     -webkit-transform: scale(0.5) skew(50deg,0deg);
@@ -55,7 +55,7 @@
 @-webkit-keyframes flow /* Safari and Chrome */
 {
     0%   {color:black;-webkit-transform: rotate(-20deg);}
-    25%  {color:red;text-shadow: 0 0 10px #F00;-webkit-transform: rotate(30deg) scale(2);width: 25px;}
+    25%  {color:#00F;text-shadow: 0 0 10px #FF0;-webkit-transform: rotate(30deg) scale(2);width: 25px;}
     50%  {color:#5A5;text-shadow: 0 0 10px #FF0;-webkit-transform: rotate(-20deg);}
     100% {color: black;}
 }
@@ -80,4 +80,8 @@
     0%   {-webkit-transform: scale(1);}
     50%  {-webkit-transform: scale(1.5);}
     100% {-webkit-transform: scale(1);}
+}
+#user-panel  {
+ float:right;
+ padding: 5px;
 }

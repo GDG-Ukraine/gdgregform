@@ -6,31 +6,36 @@ db = require('../db');
 
 module.exports = function (app) {
 
+function loadEvent(id, cb) {
+    chainer = new Sequelize.Utils.QueryChainer();
+    chainer
+        .add(models.gevents.find({ where: {id:id},include:['Participants']}))
+        .add(models.participations.findAll({where: {event_id: id}}))
+        .run()
+        .success(function(results) {
+            var e = results[0],
+                regs = results[1];
+
+            if (e.fields) e.fields = JSON.parse(e.fields);
+            for (var n = 0; n < regs.length; n++) {
+                regs[n] = db.copySqObject(regs[n]);
+                regs[n].cardUrl = secret.crypt(regs[n].id + "");
+            }
+            var nE = e.values;
+            nE.participants = e.participants;
+            nE.registrations = regs;
+            cb(null,nE);
+        }).error(function() { cb("Cant load",null);});
+}    
+    
 // get
     app.get('/api/events/:id', function (req, res) {
         if (!auth.check(req, res)) return;
-        if (!req.params.id) return res.send("Not found");
-        models.gevents.find(req.params.id).success(function (e) {
-            if (e.fields) e.fields = JSON.parse(e.fields);
-            var chainer = new Sequelize.Utils.QueryChainer();
-            chainer
-                .add(e.getParticipants())
-                .add(models.participations.findAll({where: {event_id: req.params.id}}))
-                .run()
-                .success(function (results) {
-                    var ps = results[0];
-                    var regs = results[1];
-                    for (var n = 0; n < regs.length; n++) {
-                        regs[n] = db.copySqObject(regs[n]);
-                        regs[n].cardUrl = secret.crypt(regs[n].id + "");
-                    }
-
-                    var newE = db.copySqObject(e);
-                    newE.participants = ps;
-                    newE.registrations = regs;
-                    res.json(newE);
-                });
-        }).error(app.onError(res));
+        if (!req.params.id) return res.send(404,"Not found");
+        loadEvent(req.params.id, function(err,data) {
+          if (err) app.onError(res)
+          else res.send(data);            
+        });
     });
 // create 
     app.post('/api/events', function (req, res) {
@@ -70,7 +75,8 @@ module.exports = function (app) {
 // list
     app.get('/api/events', function (req, res) {
         if (!auth.check(req, res)) return;
-        models.gevents.findAll().success(function (events) {
+        var filter = req.user && req.user.filter_place?{where:{host_gdg_id:req.user.filter_place}}:{};
+        models.gevents.findAll(filter).success(function (events) {
             res.send(events);
         }).error(app.onError(res));
     });
@@ -142,6 +148,98 @@ module.exports = function (app) {
                 reg.destroy();
                 res.send({ok:true});
             });
+    });
+    var https = require('https');
+    app.post('/api/events/:id/report', function(req, res) {
+        if (!auth.check(req, res)) return false;
+        loadEvent(req.params.id, function(err, event) {
+            if (err) return app.onError(res);
+        var https = require('https');
+        const boundary = '-------314159265358979323846';
+        const delimiter = "\r\n--" + boundary + "\r\n";
+        const close_delim = "\r\n--" + boundary + "--";
+        const contentType = 'text/csv';
+        var metadata = {
+            'title': "Registrations to "+event.title,
+            'mimeType': contentType
+        };
+        var dfields = ["name","surname","nickname","email","phone","gplus","hometown","company",
+                "position","www","experience_level","experience_desc","interests","events_visited",
+                "english_knowledge","t_shirt_size","gender","additional_info"];
+        var fields = dfields.slice(0);
+        fields.unshift("reg#");
+        for (var fn in event.fields) {
+            var s = event.fields[fn].name;
+            if (s.indexOf('"')>=0) s = s.replace(/"/g,'""');
+            fields.push(s);
+        }
+
+        function findReg(id) {
+            for (var n in event.registrations)
+                if (event.registrations[n].googler_id==id) return event.registrations[n];
+            return null;
+        }
+
+        var data = '"'+fields.join('","')+'"\n';
+        for (var n = 0;n<event.participants.length;n++) {
+            var p = event.participants[n];
+            var reg = findReg(p.id);
+            var fdata = JSON.parse(reg.fields)||{};
+            if (!reg.accepted) continue;
+            var cols = [];
+            fields.forEach(function(field) {
+                if (field=='reg#') cols.push(reg.id);
+                else {
+                var s = p[field];
+                if (!s) {
+                    s = fdata[field];
+                    if (!s) s = '';
+                }
+                if (s.indexOf('"')>=0) s = s.replace(/"/g,'""');
+                cols.push(s);
+                }
+            });
+            data += '"'+cols.join('","')+'"\n';
+        }
+        var base64Data = new Buffer(data).toString('base64');
+        var multipartRequestBody =
+            delimiter +
+                'Content-Type: application/json\r\n\r\n' +
+                JSON.stringify(metadata) +
+                delimiter +
+                'Content-Type: ' + contentType + '\r\n' +
+                'Content-Transfer-Encoding: base64\r\n' +
+                '\r\n' +
+                base64Data +
+                close_delim;
+
+        var options = require('url').parse('https://www.googleapis.com/upload/drive/v2/files?uploadType=multipart&convert=true');
+        options.headers = {
+            Authorization: "Bearer " + req.user.accessToken,
+            "Content-Length":multipartRequestBody.length,
+            'Content-Type': 'multipart/mixed; boundary="' + boundary + '"'
+        };
+        options.method = 'POST';
+
+        var r = https.request(options, function(hres) {
+            console.log("Got response: " + hres.statusCode);
+            var data = '';
+            hres.on('data', function (chunk) {
+                //console.log('BODY: ' + chunk);
+                data += chunk;
+            });
+            hres.on('end', function() {
+                var r = JSON.parse(data);
+                res.send({url: r.alternateLink});
+            });
+
+        }).on('error', function(e) {
+                console.log("Got error: " + e.message);
+                res.send({ok:fase});
+        });
+        r.write(multipartRequestBody);
+        r.end();
+        });
     });
 }
 

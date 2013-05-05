@@ -11,14 +11,19 @@ everyauth.everymodule
         callback(null, usersById[id]);
     });
 
-var allowedUsers = [
-    'olostan@gmail.com',
-    'anastasiaafonina@gmail.com',
-    'v.y.ivanov@gmail.com',
-    'svyatoslav@sydorenko.org.ua',
-    'oleh.zasadnyy@gmail.com',
-    'mazur.roman@gmail.com',
-];
+var nextCheck,admins;
+var getAllowedUers = function(cb) {
+  if (!nextCheck || nextCheck < Date.now()) {
+     require('./models').admins.findAll().success(function (newAdmins) {
+         admins = newAdmins;
+         nextCheck = new Date();
+         nextCheck.setHours(nextCheck.getHours()+1);
+         //console.log('admins',admins);
+         cb(admins);
+     });
+  }
+  else cb(admins);
+};
 
 exports.restrictAdmin = function(req, res, next) {
     if (authMode == "none") return next();
@@ -29,9 +34,16 @@ exports.restrictAdmin = function(req, res, next) {
            console.log("saving referer", req.session.redirectTo);
            res.redirect('/auth/google');
         } else {
-            if (allowedUsers.indexOf(req.user.email)==-1)
-                res.end("Your account is not authorized to manage GDG data");
-            else next();
+            getAllowedUers(function(allowedUsers) {
+                var user = allowedUsers.filter(function(u) { return u.email==req.user.email});
+                if (user.length==0)
+                    res.send(403,"Your account is not authorized to manage GDG data");
+                 else {
+                    req.user.admin = true;
+                    req.user.filter_place = user[0].filter_place;
+                    next();
+                }
+            });
         }
     } else {
         if (req.user) res.locals.user = req.user;
@@ -47,7 +59,7 @@ everyauth.google
     .scope(function(req,res) {
         var scope = "https://www.googleapis.com/auth/userinfo#email https://www.googleapis.com/auth/userinfo.profile";
         if (req.session.adminRequest)
-            scope = scope + " https://mail.google.com/";
+            scope = scope + " https://mail.google.com/ https://www.googleapis.com/auth/drive.file";
         return scope;
     })
     .findOrCreateUser( function (sess, accessToken, extra, googleUser) {
@@ -70,8 +82,8 @@ everyauth.everymodule.handleLogout( function (req, res) {
 
 exports.check = function(req,res) {
     if (authMode == "none") return true;
-    var allowed = req.user && allowedUsers.indexOf(req.user.email)>-1;
-    if (!allowed) res.end("Not authorized");
+    var allowed = req.user && req.user.admin;
+    if (!allowed) res.send(403,"Not authorized");
     return allowed;
 };
 

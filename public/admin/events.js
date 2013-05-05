@@ -180,10 +180,17 @@ angular.module('gdgorgua')
             }
         };
         $scope.openReportParticipants = function() {
-            $window.open('events/participants.html');
+            /*$window.open('events/participants.html');
             $window.getEventData = function(cb) {
                 cb($scope.e);
-            }
+            } */
+            $scope.reporting = true;
+            $http.post('/api/events/'+$routeParams.eventId+'/report').then(function(r) {
+                $scope.reporting = false;
+                if (r.data.url)
+                    $window.open(r.data.url);
+                else alert('Strange response:'+ JSON.stringify(r.data));
+            });
         }
 
 

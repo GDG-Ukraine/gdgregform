@@ -30,7 +30,8 @@ angular.module('gdgorgua', ['ngResource','$strap'])
             }
          });
     })
-.controller('MainCtrl', function($scope, $location) {
+.controller('MainCtrl', function($scope, $location,$http) {
+   $scope.info = $http.get('/api/info').then(function(r) { return r.data;});
    $scope.$watch(function() { return $location.path()}, function(nv) {
        var parts = nv.split('/');
        $scope.current = parts[1];

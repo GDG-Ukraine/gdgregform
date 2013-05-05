@@ -117,7 +117,11 @@
         <button type="button" class="btn" value="waiting" ng-disabled="e.participants.length - keys(accepted) == 0"><i class="icon-check-empty"></i> Waiting for approval ({{e.participants.length - keys(accepted)}})</button>
     </div>
     <div class="btn-group" >
-        <button type="button" class="btn btn-info" ng-click="openReportParticipants()" ><i class="icon-book"></i> Report</button>
+        <button type="button" class="btn" ng-click="openReportParticipants()" ng-disabled='reporting'>
+            <img src="https://developers.google.com/drive/images/drive_icon.png" style="height:20px" ng-hide="reporting">
+            <i ng-show='reporting' class="icon-spinner icon-spin"></i>
+            Send<span ng-show='reporting'>ing</span> to Google Drive&trade;
+        </button>
     </div>
     <table class='table'>
         <thead>

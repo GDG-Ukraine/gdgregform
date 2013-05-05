@@ -94,7 +94,11 @@ exports.createMailer = function (sender) {
             prepareData(id, url, function (locals) {
                 var html = ejs.render(fs.readFileSync('./public/card.html') + "", locals);
                 juice.juiceContent(html, {url: url + "/"}, function (err, html) {
-
+                    if (err) {
+                        console.log("Error:",err);
+                        cb(false);
+                        return;
+                    }
                     html = html.replace(/&amp;/g, '&');
 
                     var mailOptions = {

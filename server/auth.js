@@ -17,7 +17,7 @@ var getAllowedUers = function(cb) {
      require('./models').admins.findAll().success(function (newAdmins) {
          admins = newAdmins;
          nextCheck = new Date();
-         nextCheck.setHours(nextCheck.getHours()+1);
+         nextCheck.setMinutes(nextCheck.getMinutes()+5);
          //console.log('admins',admins);
          cb(admins);
      });

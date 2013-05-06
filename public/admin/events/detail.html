@@ -227,7 +227,7 @@
     <div class="control-group">
         <div class="controls">
             <a href="#/" class="btn"><i class="icon-reply"></i> Cancel</a>
-            <button ng-click="save()" ng-disabled="isClean() || myForm.$invalid"
+            <button ng-click="save()" ng-disabled="isClean() || myForm.$invalid || loading"
                     class="btn btn-primary"><i class="icon-ok"></i> Save</button>
             <button bs-modal="'eventDelete.html'"
                     ng-show="e.id" class="btn btn-danger"><i class="icon-remove"></i> Delete</button>

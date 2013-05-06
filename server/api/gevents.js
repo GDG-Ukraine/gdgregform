@@ -110,7 +110,7 @@ function loadEvent(id, cb) {
                                 }
 
                                 if (--waitFor == 0) {
-                                    sender.close();
+                                    if (sender) sender.close();
                                     res.send({ok: success});
                                 }
                             };

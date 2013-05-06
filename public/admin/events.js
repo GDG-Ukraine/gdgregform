@@ -58,6 +58,7 @@ angular.module('gdgorgua')
     .controller('EventsCreateCtrl', function ($scope, $location, GEvent,EventsFielder) {
         EventsFielder($scope);
         $scope.editing = false;
+        $scope.enable = true;
         $scope.save = function () {
             GEvent.save($scope.e, function (e) {
                 $location.path('/edit/' + e.id);

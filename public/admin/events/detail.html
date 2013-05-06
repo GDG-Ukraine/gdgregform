@@ -1,4 +1,9 @@
+<div ng-hide='enable' class='loading'>
+    <i class='icon-spin icon-spinner'></i>
+    Event information is been loading...
+</div>
 
+<div ng-show='enable'>
     <h2 ng-show="editing">Editing event #{{e.id}}
         <button class='btn' ng-disabled='loading'><i ng-class="{'icon-spin':loading}" class='icon-refresh' style='color:blue' ng-click='refresh()'></i></button>
     </h2>
@@ -12,9 +17,8 @@
         <li ng-class="{active: tab == 'part'}"><a ng-click="tab='part'"><i class="icon-group"></i> Participants ({{ e.participants.length}})</a></li>
         <li ng-class="{active: tab == 'fields'}"><a ng-click="tab='fields'"><i class="icon-tasks"></i> Form fields</a></li>
     </ul>
-<div ng-hide='enable' class='loading'>
-    <i class='icon-spin icon-spinner'></i>
-    Event information is been loading...</div>
+</div>
+
 <form name="myForm" class="form-horizontal" ng-show='enable' >
  <div ng-show="tab == 'info' || !editing">
     <div class="control-group" ng-class="{error: myForm.title.$invalid}">

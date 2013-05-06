@@ -4,7 +4,7 @@
     </h2>
     <h2 ng-hide="editing">Creating event</h2>
     <div ng-show='editing' class="alert alert-success" >
-        Registration form: <a href='/events/{{e.id}}/register' target='_blank'>Link</a>
+        Registration form: <a href='http://gdg.org.ua/events/{{e.id}}/register' target='_blank'>Link</a> (local <a href='/events/{{e.id}}/register' target='_blank'>link</a>)
     </div>
 
     <ul class="nav nav-tabs" ng-show="editing">
@@ -12,8 +12,10 @@
         <li ng-class="{active: tab == 'part'}"><a ng-click="tab='part'"><i class="icon-group"></i> Participants ({{ e.participants.length}})</a></li>
         <li ng-class="{active: tab == 'fields'}"><a ng-click="tab='fields'"><i class="icon-tasks"></i> Form fields</a></li>
     </ul>
-
-<form name="myForm" class="form-horizontal" >
+<div ng-hide='enable' class='loading'>
+    <i class='icon-spin icon-spinner'></i>
+    Event information is been loading...</div>
+<form name="myForm" class="form-horizontal" ng-show='enable' >
  <div ng-show="tab == 'info' || !editing">
     <div class="control-group" ng-class="{error: myForm.title.$invalid}">
         <label class="control-label">Title</label>
@@ -57,6 +59,14 @@
             <input type="text" name="closereg" ng-model="e.closereg" bs-datepicker data-date-format="yyyy-mm-dd">
             <button type="button" class="btn" data-toggle="datepicker"><i class="icon-calendar"></i></button>
         </div>
+    </div>
+
+    <div class="control-group " ng-class="{error: myForm.closereg.$invalid}">
+         <label class="control-label">Registrations limit</label>
+         <div class="controls">
+             <input type="checkbox" ng-checked='max_regs_active' ng-click='switchMaxRegs()'>
+             <input name="max_regs" ng-model="e.max_regs" ng-disabled='e.max_regs==null'>
+         </div>
     </div>
 
     <div class="control-group " ng-class="{error: myForm.place.$invalid}">
@@ -209,6 +219,7 @@
         </div>
 
     </script>
+    <div class='alert alert-error' ng-show='myForm.$invalid'>There are some errors above</div>
     <div class="control-group">
         <div class="controls">
             <a href="#/" class="btn"><i class="icon-reply"></i> Cancel</a>

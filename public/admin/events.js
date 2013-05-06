@@ -42,6 +42,16 @@ angular.module('gdgorgua')
                for (var p in $scope.places) if ($scope.places[p] && $scope.places[p].id==placeId) place = $scope.places[p];
                if (place) return place.logo;
            }
+           $scope.$watch('e.max_regs', function() {
+               if ($scope.e)
+                $scope.max_regs_active = $scope.e.max_regs != undefined;
+           });
+           $scope.switchMaxRegs = function() {
+               $scope.e.max_regs = $scope.e.max_regs==null?0:null;
+           };
+           $scope.$watch('myForm.$invalid', function() {
+               console.log("invalid?",$scope.myForm.$invalid);
+           })
         };
     })
 
@@ -62,6 +72,7 @@ angular.module('gdgorgua')
 
         $scope.editing = true;
         $scope.tab = 'info';
+        $scope.enable = false;
 
         $scope.keys = function(obj) {
             var r = 0;
@@ -76,6 +87,7 @@ angular.module('gdgorgua')
                 $scope.tab =  $window.sessionStorage.getItem('gdgeventsTab');
                 if (!$scope.tab) $scope.tab = 'info';
                 $scope.e = JSON.parse($window.sessionStorage.getItem('gdgevent'+$routeParams.eventId));
+                if ($scope.e && $scope.e.title) $scope.enable = true;
             } catch(err) {};
         }
         $scope.$watch('tab', function(tab) {
@@ -84,6 +96,7 @@ angular.module('gdgorgua')
         $scope.refresh = function() {
             $scope.loading = true;
             GEvent.get({id: $routeParams.eventId}, function (e) {
+                $scope.enable = true;
                 $scope.loading = false;
                 e.date = $filter('date')(e.date,'yyyy-MM-dd');
                 e.closereg = $filter('date')(e.closereg,'yyyy-MM-dd');

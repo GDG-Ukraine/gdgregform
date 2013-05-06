@@ -25,6 +25,7 @@ module.exports = function (app) {
                 if (!e) res.end("No such event");
                 else {
                     e.getPlace().success(function (place) {
+                        if (place.logo[0]=='/') place.logo = 'http://gdg.org.ua'+place.logo;
                         if (e.closereg && (new Date(e.closereg)) < (new Date())) {
                             models.gevents.findAll({order: 'date', limit: 5, where: ["date > NOW()", "closereg > NOW()"] }).success(function (events) {
                                 res.render('regclosed.html', { event: e, events: events, place:place});

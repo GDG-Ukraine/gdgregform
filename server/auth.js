@@ -36,8 +36,10 @@ exports.restrictAdmin = function(req, res, next) {
         } else {
             getAllowedUers(function(allowedUsers) {
                 var user = allowedUsers.filter(function(u) { return u.email==req.user.email});
-                if (user.length==0)
-                    res.send(403,"Your account is not authorized to manage GDG data");
+                if (user.length==0) {
+                    nextCheck = new Date();
+                    res.send(403,"Your account '"+req.user.email+"' is not authorized to manage GDG data. If it is, try to reload page.");
+                }
                  else {
                     req.user.admin = true;
                     req.user.filter_place = user[0].filter_place;

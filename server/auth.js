@@ -63,10 +63,12 @@ everyauth.google
         return scope;
     })
     .findOrCreateUser( function (sess, accessToken, extra, googleUser) {
-        googleUser.refreshToken = extra.refresh_token;
-        googleUser.expiresIn = extra.expires_in;
-        googleUser.accessToken = accessToken;
-        return usersById[googleUser.id] || (usersById[googleUser.id] =  googleUser);
+        var user = usersById[googleUser.id];
+        if (!user) user = usersById[googleUser.id] =  googleUser;
+        user.refreshToken = extra.refresh_token;
+        user.expiresIn = extra.expires_in;
+        user.accessToken = accessToken;
+        return user;
     })
     .redirectPath(function(req,res) {
         if (req.session.redirectTo) return req.session.redirectTo;

@@ -26,15 +26,15 @@ function loadEvent(id, cb) {
             nE.registrations = regs;
             cb(null,nE);
         }).error(function() { cb("Cant load",null);});
-}    
-    
+}
+
 // get
     app.get('/api/events/:id', function (req, res) {
         if (!auth.check(req, res)) return;
         if (!req.params.id) return res.send(404,"Not found");
         loadEvent(req.params.id, function(err,data) {
           if (err) app.onError(res)
-          else res.send(data);            
+          else res.send(data);
         });
     });
 // create 

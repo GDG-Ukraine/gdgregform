@@ -203,7 +203,10 @@ angular.module('gdgorgua')
                 $scope.reporting = false;
                 if (r.data.url)
                     $window.open(r.data.url);
-                else alert('Strange response:'+ JSON.stringify(r.data));
+                else {
+                    console.log("Error while sending to Google Drive:",r.data);
+                    alert('Error while sending to Drive. Please open console for more details.');
+                }
             });
         }
 

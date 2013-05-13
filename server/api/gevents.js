@@ -230,7 +230,12 @@ function loadEvent(id, cb) {
             });
             hres.on('end', function() {
                 var r = JSON.parse(data);
-                res.send({url: r.alternateLink});
+                if (hres.statusCode == 200)
+                    res.send({url: r.alternateLink});
+                else {
+                    res.send({message:hres.statusText, data:data});
+                    console.log("error sending to drive:", hres.statusCode, hres.statusText, data);
+                }
             });
 
         }).on('error', function(e) {

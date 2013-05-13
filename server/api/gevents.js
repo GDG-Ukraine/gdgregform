@@ -15,7 +15,10 @@ function loadEvent(id, cb) {
         .success(function(results) {
             var e = results[0],
                 regs = results[1];
-
+            if (!e) {
+                cb("no event",null);
+                return;
+            }
             if (e.fields) e.fields = JSON.parse(e.fields);
             for (var n = 0; n < regs.length; n++) {
                 regs[n] = db.copySqObject(regs[n]);
@@ -27,19 +30,27 @@ function loadEvent(id, cb) {
             cb(null,nE);
         }).error(function() { cb("Cant load",null);});
 }
-
+function checkAccessToEvent(req,res,id) {
+    if (req.user.filter_place && req.user.filter_place != id) {
+        res.send(401, "User is not allowed to access this GDG host");
+        return false;
+    }
+    return true;
+}
 // get
     app.get('/api/events/:id', function (req, res) {
         if (!auth.check(req, res)) return;
         if (!req.params.id) return res.send(404,"Not found");
         loadEvent(req.params.id, function(err,data) {
-          if (err) app.onError(res)
+          if (err) app.onError(res)(err);
+          else if (!checkAccessToEvent(req, res,data.host_gdg_id)) return;
           else res.send(data);
         });
     });
 // create 
     app.post('/api/events', function (req, res) {
         if (!auth.check(req, res)) return;
+        if (req.user.filter_place) req.body.host_gdg_id = req.user.filter_place;
         if (req.body.fields) req.body.fields = JSON.stringify(req.body.fields);
         models.gevents.create(req.body).success(function (p) {
             res.send(p);
@@ -49,8 +60,9 @@ function loadEvent(id, cb) {
     app.put('/api/events/:id', function (req, res) {
         if (!auth.check(req, res)) return;
         if (req.body.fields) req.body.fields = JSON.stringify(req.body.fields);
-        models.gevents.find(req.params.id).success(function (p) {
-            p.updateAttributes(req.body)
+        models.gevents.find(req.params.id).success(function (event) {
+            if (!checkAccessToEvent(req, res,event.host_gdg_id)) return;
+            event.updateAttributes(req.body)
                 .success(function (p) {
                     res.send(p);
                 }).error(app.onError(res));
@@ -60,6 +72,7 @@ function loadEvent(id, cb) {
     app.delete('/api/events/:id', function (req, res) {
         if (!auth.check(req, res)) return;
         models.gevents.find(req.params.id).success(function (event) {
+            if (!checkAccessToEvent(req, res,event.host_gdg_id)) return;
             event.destroy()
                 .success(function (p) {
                     models.participations.findAll({where: {event_id: req.params.id}}).success(function (regs) {
@@ -140,6 +153,9 @@ function loadEvent(id, cb) {
                 });
             });
     });
+
+    // Delete participation request
+
     app.post('/api/events/:id/delete', function (req, res) {
         if (!auth.check(req, res)) return false;
         if (!req.body.id) return res.send(400, "Bad Request - no participation to delete");
@@ -150,11 +166,16 @@ function loadEvent(id, cb) {
             });
     });
     var https = require('https');
+
+    // generate report
+
     app.post('/api/events/:id/report', function(req, res) {
         if (!auth.check(req, res)) return false;
         loadEvent(req.params.id, function(err, event) {
             if (err) return app.onError(res);
-        var https = require('https');
+            if (!checkAccessToEvent(req, res,event.host_gdg_id)) return;
+
+            var https = require('https');
         const boundary = '-------314159265358979323846';
         const delimiter = "\r\n--" + boundary + "\r\n";
         const close_delim = "\r\n--" + boundary + "--";

@@ -84,9 +84,11 @@ everyauth.everymodule.handleLogout( function (req, res) {
 });
 
 
-exports.check = function(req,res) {
+exports.check = function(req,res, checkMode) {
     if (authMode == "none") return true;
     var allowed = req.user && req.user.admin;
+    console.log(req.user.filter_place, req.params.id);
+    if (allowed && checkMode=='event') allowed = req.user.filter_place == req.params.id;
     if (!allowed) res.send(403,"Not authorized");
     return allowed;
 };

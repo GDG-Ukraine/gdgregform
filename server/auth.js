@@ -30,7 +30,7 @@ exports.restrictAdmin = function(req, res, next) {
     if (req.path.substring(0,6)=='/admin') {
         if (!req.user) {
            req.session.redirectTo = req.url;
-           req.session.adminRequest = true;
+//           req.session.adminRequest = true;
            console.log("saving referer", req.session.redirectTo);
            res.redirect('/auth/google');
         } else {
@@ -80,7 +80,7 @@ everyauth.google
 
 everyauth.everymodule.handleLogout( function (req, res) {
     req.logout(); // The logout method is added for you by everyauth, too
-    this.redirect(res, req.header("Referer")||'/');
+    this.redirect(res, req.header("Referer")||'/logint.html');
 });
 
 

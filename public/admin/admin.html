@@ -31,7 +31,15 @@
         </ul>
         <span id='user-panel' ng-show='info'>
                 <span ng-show='info.user'>
-                {{info.user.email}} <img ng-src='{{info.user.picture}}' style='height:32px'/>
+                     <div class="btn-group">
+                <button class='btn dropdown-toggle' data-toggle="dropdown">
+                {{info.user.email}} <img ng-src='{{info.user.picture}}' style='height:20px'/>
+                    <span class="caret"></span>
+                </button>
+                    <ul class="dropdown-menu">
+                        <li><a href="../logout"><i class="icon-off"></i> Logout from admin panel</a></li>
+                    </ul>
+                         </div>
                 </span>
                 <img ng-show='info.place.logo' ng-src='http://gdg.org.ua{{info.place.logo}}' style='height:32px'/>
         </span>

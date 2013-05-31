@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<head>
+    <link href="/favicon.ico" rel="icon" type="image/x-icon">
+    <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/3.0.2/css/font-awesome.css" rel="stylesheet">
+    <title>Login to admin form</title>
+    <style>
+.well {
+    text-align: center;
+}
+table {
+    width: 100%;
+}
+.desc {
+    color: #999;
+}
+.left { text-align: right; }
+.right { text-align: left; }
+
+    </style>
+</head>
+<body>
+    <div class='well'>
+    <p class='lead'>Please select preferred way of login into admin form</p>
+    <div class="row-fluid">
+            <div class="span4"></div>
+            <div class="span2 left">
+                <div>
+                    <button class='btn btn-large btn-success' onclick="document.location = '/admin/admin.html';">
+                        <i class="icon-google-plus-sign icon-large"></i>
+                        Full login</button>
+                </div>
+                <div class='desc left'>
+                    This will allow you to approve users and export data to Google Drive &trademark;
+                </div>
+            </div>
+            <div class="span2 right"><div><button class='btn btn-large btn-primary'>
+                <i class="icon-google-plus-sign icon-large"></i>
+
+                Light login</button></div>
+                <div class='desc right'>
+                    This will require minimal permissions but some features would be disabled.
+                </div>
+
+            </div>
+            <div class="span4"></div>
+    </div>
+
+
+</body>
+</html>

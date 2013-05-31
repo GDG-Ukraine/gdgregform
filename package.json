@@ -6,11 +6,10 @@
   "dependencies": {
     "express": "~3.2.2",
     "sequelize": ">=1.5.0",
-    "spdy": "~1.8.2",
     "everyauth": "git://github.com/bnoguchi/everyauth.git#express3",
     "ejs": ">=0.8.3",
     "juice": "~0.2.0",
     "nodemailer": "~0.3.44"
   },
-  "engine": "node 0.8.0"
+  "engines": { "node": "0.10.*" }
 }

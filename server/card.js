@@ -72,7 +72,7 @@ var vCardText = function(user,reg,url) {
 
 };
 
-//var mailConfig = require('../config.json').mail;
+//var mailConfig = require('../config.js').mail;
 exports.createMailer = function (sender) {
     var config = {
         host: "smtp.gmail.com",

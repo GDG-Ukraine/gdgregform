@@ -94,7 +94,7 @@ function checkAccessToEvent(req,res,id) {
         }).error(app.onError(res));
     });
 
-    var emailAuth = require('../../config.json').mail;
+    var emailAuth = require('../../config.js').mail;
     var sendEmail = function (id) {
 
     }

@@ -1,7 +1,7 @@
 var crypto = require('crypto');
 
 var algorithm = 'aes256'; // or any other algorithm supported by OpenSSL
-var key = require('../config').key;
+var key = require('../config.js').key;
 
 exports.crypt = function(text) {
     var cipher = crypto.createCipher(algorithm, key);

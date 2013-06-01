@@ -1,6 +1,6 @@
 var everyauth = require('everyauth');
 
-var authMode = require('../config.json').auth;
+var authMode = require('../config.js').auth;
 
 everyauth.debug = false;
 

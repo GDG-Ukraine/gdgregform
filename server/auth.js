@@ -31,9 +31,17 @@ exports.restrictAdmin = function(req, res, next) {
         return next();
     }
     if (req.path.substring(0,6)=='/admin') {
-        if (!req.user) {
+        if (!req.user && !req.session.redirectTo) {
            req.session.redirectTo = req.url;
+           res.redirect("/login.html");
+        } else
+        if (!req.user) {
 //           req.session.adminRequest = true;
+           console.log("admin?",req.query);
+           if (req.query.light != undefined) {
+              console.log("light admin");
+              req.session.lightAdmin = true;
+           }
            console.log("saving referer", req.session.redirectTo);
            res.redirect('/auth/google');
         } else {
@@ -63,7 +71,7 @@ everyauth.google
     //.scope('https://www.googleapis.com/auth/userinfo#email https://www.googleapis.com/auth/userinfo.profile')
     .scope(function(req,res) {
         var scope = "https://www.googleapis.com/auth/userinfo#email https://www.googleapis.com/auth/userinfo.profile";
-        if (req.session.adminRequest)
+        if (!req.session.lightAdmin)
             scope = scope + " https://mail.google.com/ https://www.googleapis.com/auth/drive.file";
         return scope;
     })
@@ -83,7 +91,8 @@ everyauth.google
 
 everyauth.everymodule.handleLogout( function (req, res) {
     req.logout(); // The logout method is added for you by everyauth, too
-    this.redirect(res, req.header("Referer")||'/logint.html');
+    req.session.destroy();
+    this.redirect(res, req.header("Referer")||'/login.html');
 });
 
 

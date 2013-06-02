@@ -110,18 +110,17 @@ angular.module('gdgorgua')
         };
         $scope.filterEvent = function(p) {
            if ($scope.eFilter == "all") return true;
-           if ($scope.eFilter == "approved") return $scope.accepted[p.id];
-           else return !$scope.accepted[p.id]
+           //if ($scope.eFilter == "approved") return $scope.accepted[p.id];
+           //else return !$scope.accepted[p.id]
+           if ($scope.eFilter == "approved") return p.accepted;
+           else return !p.accepted;
+
         }
         $scope.eFilter = "all";
         $scope.toAccept = {};
-        $scope.accepted = {};
 
         $scope.$watch('e.registrations', function(regs) {
-           var r = {};
-           for (var i in regs)
-            if (regs[i].accepted) r[regs[i].googler_id] = true;
-           $scope.accepted = r;
+           $scope.accepted = $scope.e.registrations.filter(function(r) { return r.accepted; }).length;
         });
 
 
@@ -130,8 +129,9 @@ angular.module('gdgorgua')
            for(var k in v)
             if (v[k]) r.push(k);
            $scope.toAcceptArray = r;
+           console.log(r);
            if ($scope.e)
-            $scope.allSelected = r.length == ($scope.keys($scope.e.registrations)-$scope.keys($scope.accepted));
+                $scope.allSelected = r.length == ($scope.keys($scope.e.registrations)-$scope.accepted);
         },true);
 
 
@@ -139,7 +139,7 @@ angular.module('gdgorgua')
             if ($scope.toAcceptArray.length == 0) return;
             $scope.approving = true;
 
-            $http.post('/api/events/'+$routeParams.eventId+'/approve',{participants:$scope.toAcceptArray,sendEmail: $scope.sendEmail})
+            $http.post('/api/events/'+$routeParams.eventId+'/approve',{registrations:$scope.toAcceptArray,sendEmail: $scope.sendEmail})
                 .success(function(res) {
                     var success = res.ok;
                     $scope.approving = false;

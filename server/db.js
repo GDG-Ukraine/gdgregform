@@ -18,6 +18,11 @@ exports.copySqObject = function(obj) {
             attr != 'selectedValues' &&
             attr != 'hasPrimaryKeys' &&
             attr != 'isNewRecord' &&
+            attr != 'daoFactory' &&
+            attr != 'daoFactoryName' &&
+            attr != 'dataValues' &&
+            attr != '__eagerlyLoadedAssociations' &&
+            attr != '__eagerlyLoadedOptions' &&
             obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
     }
     return copy;

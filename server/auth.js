@@ -26,7 +26,10 @@ var getAllowedUers = function(cb) {
 };
 
 exports.restrictAdmin = function(req, res, next) {
-    if (authMode == "none") return next();
+    if (authMode == "none") {
+        req.user = { filter_place: null, email:"fake@user.com" };
+        return next();
+    }
     if (req.path.substring(0,6)=='/admin') {
         if (!req.user) {
            req.session.redirectTo = req.url;

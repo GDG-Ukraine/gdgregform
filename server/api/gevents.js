@@ -9,8 +9,8 @@ module.exports = function (app) {
 function loadEvent(id, cb) {
     chainer = new Sequelize.Utils.QueryChainer();
     chainer
-        .add(models.gevents.find({ where: {id:id},include:['Participants']}))
-        .add(models.participations.findAll({where: {event_id: id}}))
+        .add(models.gevents.find(id))
+        .add(models.participations.findAll({where: {event_id: id},include:[{model:models.participants,as:"Participant"}]}))
         .run()
         .success(function(results) {
             var e = results[0],
@@ -25,10 +25,9 @@ function loadEvent(id, cb) {
                 regs[n].cardUrl = secret.crypt(regs[n].id + "");
             }
             var nE = e.values;
-            nE.participants = e.participants;
             nE.registrations = regs;
             cb(null,nE);
-        }).error(function() { cb("Cant load",null);});
+        }).error(function(e) { cb("Cant load"+e,null);});
 }
 function checkAccessToEvent(req,res,id) {
     if (req.user.filter_place && req.user.filter_place != id) {
@@ -103,7 +102,7 @@ function checkAccessToEvent(req,res,id) {
 
     app.post('/api/events/:id/approve', function (req, res) {
         if (!auth.check(req, res)) return false;
-        if (!req.body.participants) return res.send(400, "Bad Request - no participants to approve");
+        if (!req.body.registrations) return res.send(400, "Bad Request - no participants to approve");
         var sender;
         if (req.body.sendEmail)
             sender = card.createMailer(req.user);
@@ -111,9 +110,8 @@ function checkAccessToEvent(req,res,id) {
             .success(function (regs) {
                 var success = true;
                 waitFor = 0;
-
                 for (var i = 0; i < regs.length; i++) {
-                    if (!regs[i].approved && req.body.participants.indexOf(regs[i].googler_id + "") > -1) {
+                    if (!regs[i].approved && req.body.registrations.indexOf(regs[i].id + "") > -1) {
                         var approve = function approveRegistration(reg) {
                             waitFor++;
                             var sendCb = function (result) {
@@ -139,7 +137,8 @@ function checkAccessToEvent(req,res,id) {
                     }
                 }
                 //res.send({ok:true});
-            });
+            }).error(app.onError(res));
+        ;
         return true;
     });
     app.post('/api/events/:id/resend', function (req, res) {
@@ -202,9 +201,9 @@ function checkAccessToEvent(req,res,id) {
         }
 
         var data = '"'+fields.join('","')+'"\n';
-        for (var n = 0;n<event.participants.length;n++) {
-            var p = event.participants[n];
-            var reg = findReg(p.id);
+        for (var n = 0;n<event.registrations.length;n++) {
+            var p = event.registrations[n].participant;
+            var reg = event.registrations[n];
             var fdata = JSON.parse(reg.fields)||{};
             if (!reg.accepted) continue;
             var cols = [];

@@ -14,7 +14,7 @@
 
     <ul class="nav nav-tabs" ng-show="editing">
         <li ng-class="{active: tab == 'info'}"><a ng-click="tab='info'"><i class="icon-magic"></i> Information</a></li>
-        <li ng-class="{active: tab == 'part'}"><a ng-click="tab='part'"><i class="icon-group"></i> Participants ({{ e.participants.length}})</a></li>
+        <li ng-class="{active: tab == 'part'}"><a ng-click="tab='part'"><i class="icon-group"></i> Participants ({{ e.registrations.length}})</a></li>
         <li ng-class="{active: tab == 'fields'}"><a ng-click="tab='fields'"><i class="icon-tasks"></i> Form fields</a></li>
     </ul>
 </div>
@@ -127,8 +127,8 @@
     <input type="text" ng-model="search" class="search-query" placeholder="Search">
     <div class="btn-group" bs-buttons-radio ng-model="eFilter">
         <button type="button" class="btn" value="all"><i class="icon-asterisk"></i> All</button>
-        <button type="button" class="btn" value="approved" ng-disabled="keys(accepted)==0"><i class="icon-check"></i> Approved ({{keys(accepted)}})</button>
-        <button type="button" class="btn" value="waiting" ng-disabled="e.participants.length - keys(accepted) == 0"><i class="icon-check-empty"></i> Waiting for approval ({{e.participants.length - keys(accepted)}})</button>
+        <button type="button" class="btn" value="approved" ng-disabled="accepted==0"><i class="icon-check"></i> Approved ({{accepted}})</button>
+        <button type="button" class="btn" value="waiting" ng-disabled="e.registrations.length - accepted == 0"><i class="icon-check-empty"></i> Waiting for approval ({{e.registrations.length - accepted}})</button>
     </div>
     <div class="btn-group" >
         <button type="button" class="btn" ng-click="openReportParticipants()" ng-disabled='reporting'>
@@ -149,14 +149,14 @@
         </tr>
         </thead>
         <tbody>
-        <tr ng-repeat="p in e.participants | filter:filterEvent | filter:search | orderBy:'title'" class="clickable">
+        <tr ng-repeat="p in e.registrations | filter:filterEvent | filter:search | orderBy:'participant.name'" class="clickable">
             <td>
-                <input type="checkbox" ng-model='toAccept[p.id]' ng-hide='accepted[p.id]' ng-disabled="approving">
-                <i class="icon-ok" ng-show='accepted[p.id]'></i>
+                <input type="checkbox" ng-model='toAccept[p.id]' ng-hide='p.accepted' ng-disabled="approving">
+                <i class="icon-ok" ng-show='p.accepted'></i>
             </td>
-            <td>{{p.name}}</td>
-            <td>{{p.surname}}</td>
-            <td>{{p.email}}</td>
+            <td>{{p.participant.name}}</td>
+            <td>{{p.participant.surname}}</td>
+            <td>{{p.participant.email}}</td>
             <td>
                 <button class='btn btn-danger' ng-controller='notificationDeleteAppCtrl' bs-modal="'confirmDeleteApp.html'"><i class="icon-trash"></i></button>
                 <button class='btn' ng-click='show(p.id)'><i class='icon-user'></i></button>

@@ -86,7 +86,7 @@ everyauth.google
     .redirectPath(function(req,res) {
         if (req.session.redirectTo) return req.session.redirectTo;
         console.log("Can't find redirection path");
-        return "/admin/admin.html";
+        return "/admin/index.html";
     });
 
 everyauth.everymodule.handleLogout( function (req, res) {

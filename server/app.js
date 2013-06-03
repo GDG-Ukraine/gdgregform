@@ -43,7 +43,7 @@ app.onError = function(res) {
 	console.log(err);
 	res.send(500,err);
   }
-}
+};
 
 auth.setup(app);
 require('./registration')(app);
@@ -51,4 +51,8 @@ require('./card').setup(app);
 
 require("fs").readdirSync("./server/api").forEach(function(file) {
   require("./api/" + file)(app);
+});
+
+app.get('/', function(req, res) {
+    res.redirect('login.html');
 });

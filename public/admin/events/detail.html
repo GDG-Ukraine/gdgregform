@@ -159,7 +159,7 @@
             <td>{{p.participant.email}}</td>
             <td>
                 <button class='btn btn-danger' ng-controller='notificationDeleteAppCtrl' bs-modal="'confirmDeleteApp.html'"><i class="icon-trash"></i></button>
-                <button class='btn' ng-click='show(p.id)'><i class='icon-user'></i></button>
+                <button class='btn' ng-click='show(p.googler_id)'><i class='icon-user'></i></button>
                 <button class='btn'  ng-click='showCard(p.id)'><i class="icon-credit-card"></i></button>
                 <button class='btn' ng-controller='notificationResendCtrl' bs-modal="'confirmSend.html'"><i class="icon-envelope"></i></button>
             </td>

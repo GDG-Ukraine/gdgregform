@@ -120,7 +120,7 @@ angular.module('gdgorgua')
         $scope.toAccept = {};
 
         $scope.$watch('e.registrations', function(regs) {
-           $scope.accepted = $scope.e.registrations.filter(function(r) { return r.accepted; }).length;
+           $scope.accepted = regs? regs.filter(function(r) { return r.accepted; }).length : 0;
         });
 
 
@@ -188,9 +188,11 @@ angular.module('gdgorgua')
 
         $scope.showCard = function(id) {
             var reg;
-            $scope.e.registrations.forEach(function(r) { if (r.googler_id==id) reg = r;});
+            $scope.e.registrations.forEach(function(r) { if (r.id==id) reg = r;});
             if (reg) {
                 $window.open("/card/"+reg.cardUrl);
+            } else {
+                console.log("No registrant found for "+id);
             }
         };
         $scope.openReportParticipants = function() {

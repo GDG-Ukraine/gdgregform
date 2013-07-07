@@ -86,12 +86,12 @@
     <script type="text/ng-template" id="confirmSend.html">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h4>Re-sending email to {{p.name}} {{p.surname}}</h4>
+            <h4>Re-sending email to {{p.participant.name}} {{p.participant.surname}}</h4>
         </div>
         <div class="modal-body">
-            Are you sure you want to send invitation email to <b>{{p.email}}</b>?
+            Are you sure you want to send invitation email to <b>{{p.participant.email}}</b>?
 
-            <div ng-show='!accepted[p.id]' class='alert alert-error'>The application is not accepted yet!</div>
+            <div ng-show='!accepted[p.id]' class='alert alert-error'>The application is already accepted! Email probably was already sent.</div>
 
         </div>
         <div class="modal-footer">

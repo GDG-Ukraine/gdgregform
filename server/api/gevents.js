@@ -199,13 +199,13 @@ function checkAccessToEvent(req,res,id) {
                 if (event.registrations[n].googler_id==id) return event.registrations[n];
             return null;
         }
-
         var data = '"'+fields.join('","')+'"\n';
         for (var n = 0;n<event.registrations.length;n++) {
             var p = event.registrations[n].participant;
             var reg = event.registrations[n];
             var fdata = JSON.parse(reg.fields)||{};
-            if (!reg.accepted) continue;
+            if (req.query.mode=='approved' && !reg.accepted) continue;
+            if (req.query.mode=='waiting' && reg.accepted) continue;
             var cols = [];
             fields.forEach(function(field) {
                 if (field=='reg#') cols.push(reg.id);

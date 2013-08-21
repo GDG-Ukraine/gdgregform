@@ -249,6 +249,7 @@ function checkAccessToEvent(req,res,id) {
                 data += chunk;
             });
             hres.on('end', function() {
+        	try {
                 var r = JSON.parse(data);
                 if (hres.statusCode == 200)
                     res.send({url: r.alternateLink});
@@ -256,6 +257,11 @@ function checkAccessToEvent(req,res,id) {
                     res.send({message:hres.statusText, data:data});
                     console.log("error sending to drive:", hres.statusCode, hres.statusText, data);
                 }
+            	} catch(e) {
+            	    res.send({message:hres.statusText, data:data});
+                    console.log("error sending to drive:", hres.statusCode, hres.statusText, data);
+
+            	}
             });
 
         }).on('error', function(e) {

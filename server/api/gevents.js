@@ -175,12 +175,14 @@ function checkAccessToEvent(req,res,id) {
             if (!checkAccessToEvent(req, res,event.host_gdg_id)) return;
 
             var https = require('https');
-        const boundary = '-------314159265358979323846';
-        const delimiter = "\r\n--" + boundary + "\r\n";
-        const close_delim = "\r\n--" + boundary + "--";
+        //const boundary = '-------314159265358979323846';
+        const boundary = '314159265358979323846';
+        const delimiter = "--" + boundary + "\r\n";
+        const close_delim = "\r\n--" + boundary + "--\r\n";
         const contentType = 'text/csv';
         var metadata = {
             'title': "Registrations to "+event.title,
+            //'title': "Registrations to "+event.id,
             'mimeType': contentType
         };
         var dfields = ["name","surname","nickname","email","phone","gplus","hometown","company",
@@ -221,13 +223,14 @@ function checkAccessToEvent(req,res,id) {
             });
             data += '"'+cols.join('","')+'"\n';
         }
+
         var base64Data = new Buffer(data).toString('base64');
         var multipartRequestBody =
             delimiter +
-                'Content-Type: application/json\r\n\r\n' +
+                'Content-Type: application/json; charset=UTF-8\r\n\r\n' +
                 JSON.stringify(metadata) +
-                delimiter +
-                'Content-Type: ' + contentType + '\r\n' +
+                '\r\n'+delimiter +
+                'Content-Type: ' + contentType + '; charset=UTF-8\r\n' +
                 'Content-Transfer-Encoding: base64\r\n' +
                 '\r\n' +
                 base64Data +
@@ -266,9 +269,10 @@ function checkAccessToEvent(req,res,id) {
 
         }).on('error', function(e) {
                 console.log("Got error: " + e.message);
-                res.send({ok:fase});
+                res.send({ok:false});
         });
-        r.write(multipartRequestBody);
+        console.log("r:",multipartRequestBody);
+        r.write(multipartRequestBody,'utf8');
         r.end();
         });
     });

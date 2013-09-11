@@ -192,14 +192,23 @@
             <th>Title</th>
             <th>Type</th>
             <th>Require</th>
-            <th><button class='btn btn-success' ng-click='addField()'>Add</button></th>
+            <th><button class='btn btn-success' ng-click='addField()'><i class='icon-plus-sign'></i> Add</button></th>
         </tr>
         </thead>
         <tbody>
-        <tr ng-repeat="field in e.fields" class="clickable">
+        <tr ng-repeat="field in e.fields track by $index" class="clickable">
             <td><input ng-model='field.name' required class='input-large'/></td>
             <td><input ng-model='field.title' required class='input-xlarge'/></td>
-            <td>Text</td>
+            <td>
+                <select ng-model='field.type' required ng-options="t.type as t.name for t in types"></select>
+                <div ng-show="field.type=='select'">
+                    <div ng-repeat='option in field.options track by $index'>
+                        {{ $index+1 }}. <input type="text" ng-model='field.options[$index]' required>
+                        <button ng-click="removeOption(field, $index)" class="btn btn-small"><i class="icon-minus"></i></button>
+                    </div>
+                    <button class="btn btn-small" ng-click="addOption(field)"><i class='icon-plus-sign'></i> Add option</button>
+                </div>
+            </td>
             <td><input type="checkbox" ng-bind='field.req'/> </td>
             <td>
                 <i class="icon-trash" ng-click='deleteField(field)'></i>

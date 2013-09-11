@@ -30,7 +30,7 @@ angular.module('gdgorgua')
         return function($scope) {
            $scope.addField = function() {
                if (!$scope.e.fields) $scope.e.fields = [];
-               $scope.e.fields.push({});
+               $scope.e.fields.push({type:'text'});
            };
            $scope.deleteField = function(field) {
               var i = $scope.e.fields.indexOf(field);
@@ -49,9 +49,29 @@ angular.module('gdgorgua')
            $scope.switchMaxRegs = function() {
                $scope.e.max_regs = $scope.e.max_regs==null?0:null;
            };
+
            $scope.$watch('myForm.$invalid', function() {
                console.log("invalid?",$scope.myForm.$invalid);
+           });
+
+           $scope.types = [
+               {type:'text', name: 'Text'},
+               {type:'checkbox', name: 'Checkbox'},
+               {type:'select', name: 'Select'},
+           ];
+           $scope.addOption = function(field) {
+               if (!field.options) field.options = [];
+               field.options.push("");
+           };
+           $scope.removeOption = function(field, index) {
+               field.options.splice(index,1);
+           }
+
+           // fix for fields without type
+           $scope.$watch('e.fields', function(fields) {
+               if (fields) angular.forEach(fields,function(field) { if (!field.type) field.type='text'});
            })
+
         };
     })
 

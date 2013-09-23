@@ -9,13 +9,14 @@
     </h2>
     <h2 ng-hide="editing">Creating event</h2>
     <div ng-show='editing' class="alert alert-success" >
-        Registration form: <a href='http://gdg.org.ua/events/{{e.id}}/register' target='_blank'>Link</a> (local <a href='/events/{{e.id}}/register' target='_blank'>link</a>)
+        Registration form: <a href='http://gdg.org.ua/events/{{e.id}}/register' target='_blank'>Link</a> <span class="muted">(local <a href='/events/{{e.id}}/register' target='_blank'>link</a>)</span>
     </div>
 
     <ul class="nav nav-tabs" ng-show="editing">
         <li ng-class="{active: tab == 'info'}"><a ng-click="tab='info'"><i class="icon-magic"></i> Information</a></li>
         <li ng-class="{active: tab == 'part'}"><a ng-click="tab='part'"><i class="icon-group"></i> Participants ({{ e.registrations.length}})</a></li>
-        <li ng-class="{active: tab == 'fields'}"><a ng-click="tab='fields'"><i class="icon-tasks"></i> Form fields</a></li>
+        <li ng-class="{active: tab == 'fields'}"><a ng-click="tab='fields'"><i class="icon-tasks"></i> Custom fields</a></li>
+        <li ng-class="{active: tab == 'form'}"><a ng-click="tab='form'"><i class="icon-tasks"></i> Form fields</a></li>
     </ul>
 </div>
 
@@ -103,13 +104,13 @@
     </script>
 
     <script type="text/ng-template" id="confirmDeleteApp.html">
+
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h4>Deleting application of {{p.name}} {{p.surname}}</h4>
+            <h4>Deleting application of {{p.participant.name}} {{p.participant.surname}}</h4>
         </div>
         <div class="modal-body">
-            Are you sure you want to delete application of <b>{{p.name}}</b>?
-
+            Are you sure you want to delete application of <b>{{p.participant.name}} ({{p.participant.email}})</b>?
             <div ng-show='accepted[p.id]' class='alert alert-error'>The application is already accepted!</div>
 
         </div>
@@ -183,7 +184,6 @@
 
     </div>
 </div>
-
 <div class='' ng-show="editing && tab=='fields'">
     <table class='table'>
         <thead>
@@ -202,14 +202,16 @@
             <td>
                 <select ng-model='field.type' required ng-options="t.type as t.name for t in types"></select>
                 <div ng-show="field.type=='select'">
+                    <input type="checkbox" ng-model="field.multiple"> Allow multiple selection
                     <div ng-repeat='option in field.options track by $index'>
                         {{ $index+1 }}. <input type="text" ng-model='field.options[$index]' required>
                         <button ng-click="removeOption(field, $index)" class="btn btn-small"><i class="icon-minus"></i></button>
                     </div>
                     <button class="btn btn-small" ng-click="addOption(field)"><i class='icon-plus-sign'></i> Add option</button>
+                    <input type="checkbox" ng-model="field.allow_custom"> Allow custom answer
                 </div>
             </td>
-            <td><input type="checkbox" ng-bind='field.req'/> </td>
+            <td><input type="checkbox" ng-model='field.required'/> </td>
             <td>
                 <i class="icon-trash" ng-click='deleteField(field)'></i>
             </td>
@@ -217,6 +219,27 @@
         </tbody>
     </table>
 </div>
+
+<div class='' ng-show="editing && tab=='form'">
+    <div class="alert"><i class="icon-wrench"></i> Under construction <i class="icon-wrench"></i>
+
+    </div>
+     <table class='table'>
+         <thead>
+         <tr>
+             <th>Field</th>
+             <th>Enabled</th>
+         </tr>
+         </thead>
+         <tbody>
+         <tr ng-repeat="field in formFields track by field.name" class="clickable">
+             <td>{{ field.title }}</td>
+             <td><input type="checkbox" ng-checked='!isHidden(field)' ng-click="toggleHiddenField(e,field)" /></td>
+         </tr>
+         </tbody>
+     </table>
+ </div>
+
 
     <script type="text/ng-template" id="eventDelete.html">
         <div class="modal-header">

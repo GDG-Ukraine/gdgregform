@@ -158,10 +158,13 @@ function checkAccessToEvent(req,res,id) {
     app.post('/api/events/:id/delete', function (req, res) {
         if (!auth.check(req, res)) return false;
         if (!req.body.id) return res.send(400, "Bad Request - no participation to delete");
-        models.participations.find({ where: {event_id: req.params.id, googler_id:req.body.id}})
+        //models.participations.find({ where: {event_id: req.params.id, googler_id:req.body.id}})
+        models.participations.find({ where: {event_id: req.params.id, id:req.body.id}})
             .success(function (reg) {
-                reg.destroy();
-                res.send({ok:true});
+                //reg.destroy();
+                reg.updateAttributes({deleted: true}).success(function () {
+                    res.send({ok:true});
+                }).fail(function(){res.send({ok:false})});
             });
     });
     var https = require('https');

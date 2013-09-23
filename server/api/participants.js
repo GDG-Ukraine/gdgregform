@@ -59,7 +59,7 @@ app.put('/api/participants/:id', function (req, res){
 });
 
 // delete
-app.delete('/api/participants/:id', function (req, res){
+/*app.delete('/api/participants/:id', function (req, res){
   if (!auth.check(req,res)) return;
   models.participants.find(req.params.id).success(function (p) { 
 	p.destroy()
@@ -71,5 +71,5 @@ app.delete('/api/participants/:id', function (req, res){
         }).error(app.onError(res));
   }).error(function(err) { console.log(err);res.send(err); }); 
 });
-
+*/
 }

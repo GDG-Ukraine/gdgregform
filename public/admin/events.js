@@ -66,11 +66,45 @@ angular.module('gdgorgua')
            $scope.removeOption = function(field, index) {
                field.options.splice(index,1);
            }
+           $scope.formFields =[
+               {name:'phone',title:'Telephone'},
+               {name:'gplus',title:'Google+'},
+               {name:'hometown',title:'Hometown'},
+               {name:'company',title:'Company'},
+               {name:'position',title:'Position'},
+               {name:'www',title:'WWW'},
+               {name:'expirience_level',title:'Expirience Level'},
+               {name:'expirience_desc',title:'Expirience Description'},
+               {name:'interests',title:'Interests'},
+               {name:'events_visited',title:'Events visited'},
+               {name:'english_knowledge',title:'English knowledge'},
+               {name:'t_shirt_size',title:'T-shirt size'},
+               {name:'gender',title:'Gender'},
+               {name:'additional_info',title:'Additional Information'}
+           ];
+           var getHidden = function() {
+               if (!$scope.e.hidden) return [];
+               return $scope.e.hidden.split(',');
+           }
+           $scope.isHidden = function(field) {
+               if (!$scope.e.hidden) return false;
+
+               return getHidden().indexOf(field.name) >= 0;
+           }
+           $scope.toggleHiddenField = function(e,field) {
+               var h = getHidden();
+               if (h.indexOf(field.name)==-1)
+                   h.push(field.name);
+               else
+                   h.splice(h.indexOf(field.name),1);
+               $scope.e.hidden = h.join(',');
+           }
 
            // fix for fields without type
            $scope.$watch('e.fields', function(fields) {
                if (fields) angular.forEach(fields,function(field) { if (!field.type) field.type='text'});
-           })
+           });
+
 
         };
     })
@@ -252,16 +286,15 @@ angular.module('gdgorgua')
         $scope.deleteApp = function(id) {
             var reg;
             $scope.deleting = true;
-            $scope.e.registrations.forEach(function(r) { if (r.googler_id==id) reg = r;});
-            if (reg) {
                 $http.post('/api/events/' + $routeParams.eventId+'/delete',{id:id})
-                    .then(function(){
+                    .then(function(r){
+                        console.log(r.data);
+                        if (!r.data.ok) alert("Can't delete application");
                         $scope.deleting = false;
-                        $scope.e.registrations.splice($scope.e.registrations.indexOf(reg),1);
+                        //$scope.e.registrations.splice($scope.e.registrations.indexOf(reg),1);
                         $scope.refresh();
                         $scope.dismiss();
                     })
-            }
         }
     })
 

@@ -7,5 +7,6 @@ module.exports = require('../db.js').sequelize.define('gdg_events',{
 	"date":Sequelize.DATE,
 	"closereg":Sequelize.DATE,
 	"fields":Sequelize.TEXT,
-    "max_regs":Sequelize.INTEGER
+    "max_regs":Sequelize.INTEGER,
+    "hidden":Sequelize.TEXT
 });

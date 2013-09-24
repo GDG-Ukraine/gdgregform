@@ -79,10 +79,16 @@
     50%  {-webkit-transform: scale(1.5);}
     100% {-webkit-transform: scale(1);}
 }
-#user-panel  {
- float:right;
- padding: 5px;
+
+#user-panel {
+    float: right;
+    padding-right: 5px;
 }
+
+.navbar .brand {
+    margin-left: -10px;
+}
+
 .loading {
     text-align: center;
     background-color: rgba(250,250,100,0.2);

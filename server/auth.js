@@ -54,6 +54,7 @@ exports.restrictAdmin = function(req, res, next) {
                  else {
                     req.user.admin = true;
                     req.user.filter_place = user[0].filter_place;
+                    req.user.godmode = user[0].godmode;
                     next();
                 }
             });
@@ -99,7 +100,8 @@ everyauth.everymodule.handleLogout( function (req, res) {
 exports.check = function(req,res, checkMode) {
     if (authMode == "none") return true;
     var allowed = req.user && req.user.admin;
-    console.log(req.user.filter_place, req.params.id);
+    if (allowed) console.log(req.user.filter_place, req.params.id);
+    if (allowed && checkMode=='god') allowed = req.user.godmode;
     if (allowed && checkMode=='event') allowed = req.user.filter_place == req.params.id;
     if (!allowed) res.send(403,"Not authorized");
     return allowed;

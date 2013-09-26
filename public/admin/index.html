@@ -23,7 +23,7 @@
         <a class="brand" href="#">GDG Data</a>
         <ul class="nav">
             <li ng-class="{active: current == 'events'}"><a href="#/events"><i class="icon-trophy"></i> Events</a></li>
-            <li ng-class="{active: current == 'participants'}"><a href="#/participants"><i class="icon-group"></i> Participants</a></li>
+            <li ng-class="{active: current == 'participants'}" ng-show="info.user.godmode"><a href="#/participants"><i class="icon-group"></i> Participants</a></li>
             <li id="spinner" ng-class='{visible:requests>0}'>
                 <span id="l1">L</span><span id="l2">o</span><span id="l3">a</span><span id="l4">d</span><span id="l5">i</span><span id="l6">n</span><span id="l7">g</span><span id="l8">.</span><span id="l9">.</span><span id="l10">.</span>
             </li>

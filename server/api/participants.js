@@ -6,7 +6,7 @@ module.exports = function(app) {
 
 // list
 app.get('/api/participants', function (req, res) {
-   if (!auth.check(req,res)) return;
+   if (!auth.check(req,res,'god')) return;
    models.participants.findAll().success(function(participants) {
      res.send(participants);
   })
@@ -14,7 +14,7 @@ app.get('/api/participants', function (req, res) {
 
 // get
 app.get('/api/participants/:id', function (req, res) {
-    if (!auth.check(req,res)) return;
+    if (!auth.check(req,res,'god')) return;
     if (!req.params.id) return res.send("Invalid request");
     models.participants.find(req.params.id).success(function (p) {
         p.getEvents().success(function(events) {
@@ -51,7 +51,7 @@ app.post('/api/participants', function (req, res){
 
 // update
 app.put('/api/participants/:id', function (req, res){
-  if (!auth.check(req,res)) return;
+  if (!auth.check(req,res,'god')) return;
   models.participants.find(req.params.id).success(function (p) { 
 	p.updateAttributes(req.body)
 	  .success(function(p) { res.send(p);}).error(app.onError(res));

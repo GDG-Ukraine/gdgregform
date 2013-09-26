@@ -211,7 +211,7 @@
                     <input type="checkbox" ng-model="field.allow_custom"> Allow custom answer
                 </div>
             </td>
-            <td><input type="checkbox" ng-model='field.required'/> </td>
+            <td><input ng-show="field.type!='checkbox'" type="checkbox" ng-model='field.required'/> </td>
             <td>
                 <i class="icon-trash" ng-click='deleteField(field)'></i>
             </td>

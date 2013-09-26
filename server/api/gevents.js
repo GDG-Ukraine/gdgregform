@@ -161,8 +161,8 @@ function checkAccessToEvent(req,res,id) {
         //models.participations.find({ where: {event_id: req.params.id, googler_id:req.body.id}})
         models.participations.find({ where: {event_id: req.params.id, id:req.body.id}})
             .success(function (reg) {
-                //reg.destroy();
-                reg.updateAttributes({deleted: true}).success(function () {
+                reg.destroy().success(function(){
+                //reg.updateAttributes({deleted: true}).success(function () {
                     res.send({ok:true});
                 }).fail(function(){res.send({ok:false})});
             });

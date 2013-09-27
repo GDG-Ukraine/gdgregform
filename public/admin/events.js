@@ -83,8 +83,8 @@ angular.module('gdgorgua')
                {name:'additional_info',title:'Additional Information'}
            ];
            var getHidden = function() {
-               if (!$scope.e.hidden) return [];
-               return $scope.e.hidden.split(',');
+               if (!$scope.e.hidden) $scope.e.hidden =  [];
+               return $scope.e.hidden;
            }
            $scope.isHidden = function(field) {
                if (!$scope.e.hidden) return false;
@@ -97,7 +97,7 @@ angular.module('gdgorgua')
                    h.push(field.name);
                else
                    h.splice(h.indexOf(field.name),1);
-               $scope.e.hidden = h.join(',');
+               $scope.e.hidden = h;
            }
 
            // fix for fields without type

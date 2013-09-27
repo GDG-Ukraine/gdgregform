@@ -20,6 +20,10 @@ function loadEvent(id, cb) {
                 return;
             }
             if (e.fields) e.fields = JSON.parse(e.fields);
+            if (e.hidden) {
+                if (e.hidden[0]!='[') e.hidden = e.hidden.split(',');
+                else e.hidden = JSON.parse(e.hidden);
+            }
             for (var n = 0; n < regs.length; n++) {
                 regs[n] = db.copySqObject(regs[n]);
                 regs[n].cardUrl = secret.crypt(regs[n].id + "");
@@ -59,6 +63,7 @@ function checkAccessToEvent(req,res,id) {
     app.put('/api/events/:id', function (req, res) {
         if (!auth.check(req, res)) return;
         if (req.body.fields) req.body.fields = JSON.stringify(req.body.fields);
+        if (req.body.hidden) req.body.hidden = JSON.stringify(req.body.hidden);
         models.gevents.find(req.params.id).success(function (event) {
             if (!checkAccessToEvent(req, res,event.host_gdg_id)) return;
             event.updateAttributes(req.body)

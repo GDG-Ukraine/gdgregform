@@ -43,7 +43,7 @@ var prepareData = function (id, url, cb) {
                         var cdata = reg.fields?JSON.parse(reg.fields):{};
 
                         for (var fieldN in cfields) {
-                            fields[cfields[fieldN].title] = cdata[cfields[fieldN].name];
+                            fields[cfields[fieldN].title] = cdata[cfields[fieldN].name]||'';
                         }
                     }
 

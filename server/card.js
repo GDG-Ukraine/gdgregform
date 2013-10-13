@@ -49,8 +49,9 @@ var prepareData = function (id, url, cb) {
 
                     //var qrData = url + "/card/" + secret.crypt(reg.id + "");
                     var qrData = vCardText(user, reg, url + "/card/" + secret.crypt(reg.id + ""));
+                    var confirmData = { url: url + "/confirm/" + secret.crypt(reg.id + "")}
                     // console.log("qr:"+qrData);
-                    var locals = {fields: fields, event: event, reg: reg, qrdata: qrData, user: user};
+                    var locals = {fields: fields, event: event, reg: reg, qrdata: qrData, user: user, confirm: confirmData};
                     cb(locals);
                 });
             })
@@ -135,7 +136,7 @@ exports.createMailer = function (sender) {
         sendCardEmail: function (options, cb) {
             options.title = "✔ Registration confirmation to ";
             options.qr = true;
-            optiosn.template = "./public/card.html";
+            options.template = "./public/card.html";
             return this.sendEmail(options, cb);
         },
         sendConfirmEmail: function (options, cb) {

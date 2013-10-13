@@ -213,7 +213,7 @@ angular.module('gdgorgua')
         $scope.selectAll = function() {
             $scope.toAccept = {};
             for(var i in $scope.e.registrations) {
-                if (!$scope.e.registrations[i].accepted) $scope.toAccept[$scope.e.registrations[i].googler_id] = $scope.allSelected;
+                if (!$scope.e.registrations[i].accepted) $scope.toAccept[$scope.e.registrations[i].id] = $scope.allSelected;
             }
         }
 

@@ -3,6 +3,7 @@ var dbConfig = require("../config.js").db;
 
 var sequelize = exports.sequelize = new Sequelize(dbConfig.db, dbConfig.user, dbConfig.password, {
     host: dbConfig.host,
+    logging: false,
     define: {
         freezeTableName: true,
         syncOnAssociation: false,

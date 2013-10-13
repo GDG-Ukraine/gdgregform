@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= event.title %>: Confirmation</title>
+    <style>
+        table {
+            width: 100%;
+            border-spacing:0;
+            border-collapse:collapse;
+        }
+        td {
+            border: solid 1px #BBB;
+            padding: 10px;
+            margin: 0;
+        }
+        .header {
+            background-color: #EEE;
+        }
+        .img {
+            text-align: center;
+        }
+        .notapproved {
+            background-color: red;
+            color: yellow;
+            text-align: center;
+            font-size: 2em;
+            font-family: monospace;
+        }
+        div {
+            text-align: justify;
+        }
+    </style>
+</head>
+<body>
+    <h1>Confirmation of your visit to <%= event.title %></h1>
+
+    <div>Please confirm that you will actually visit <%= event.title %></div>
+</body>
+</html>

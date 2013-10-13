@@ -108,7 +108,7 @@ function checkAccessToEvent(req,res,id) {
     app.post('/api/events/:id/approve', function (req, res) {
         if (!auth.check(req, res)) return false;
         if (!req.body.registrations) return res.send(400, "Bad Request - no participants to approve");
-        var sender;
+        var sender, waitFor;
         if (req.body.sendEmail)
             sender = card.createMailer(req.user);
         models.participations.findAll({ where: {event_id: req.params.id}})
@@ -133,7 +133,7 @@ function checkAccessToEvent(req,res,id) {
                             reg.updateAttributes({accepted: true}).success(function () {
 
                                 if (sender)
-                                    sender.sendEmail(reg.id, req.protocol + "://" + req.get('host'), sendCb);
+                                    sender.sendCardEmail({id:reg.id,url: req.protocol + "://" + req.get('host')}, sendCb);
                                 else sendCb(true);
 
                             });
@@ -146,13 +146,46 @@ function checkAccessToEvent(req,res,id) {
         ;
         return true;
     });
+
+    app.post('/api/events/:id/send-confirm', function (req, res) {
+        if (!auth.check(req, res)) return false;
+        if (!req.body.registrations) return res.send(400, "Bad Request - no participants to approve");
+        var sender, waitFor;
+
+        sender = card.createMailer(req.user);
+
+        models.participations.findAll({ where: {event_id: req.params.id}})
+            .success(function (regs) {
+                var success = true;
+                waitFor = 0;
+                for (var i = 0; i < regs.length; i++) {
+                    if (req.body.registrations.indexOf(regs[i].id + "") > -1) {
+                        var approve = function approveRegistration(reg) {
+                            waitFor++;
+                            var sendCb = function () {
+                                if (--waitFor == 0) {
+                                    if (sender) sender.close();
+                                    res.send({ok: success});
+                                }
+                            };
+                            console.log("Sending confirmation request to")
+                            sender.sendConfirmEmail({id:reg.id, url:req.protocol + "://" + req.get('host')} , sendCb);
+                        };
+                        approve(regs[i]);
+                    }
+                }
+            }).error(app.onError(res));
+        ;
+        return true;
+    });
+
     app.post('/api/events/:id/resend', function (req, res) {
         if (!auth.check(req, res)) return false;
         if (!req.body.id) return res.send(400, "Bad Request - no participation to send");
         var sender = card.createMailer(req.user);
         models.participations.find({ where: {event_id: req.params.id, googler_id:req.body.id}})
             .success(function (reg) {
-                sender.sendEmail(reg.id, req.protocol + "://" + req.get('host'), function(result){
+                sender.sendCardEmail({id:reg.id, url:req.protocol + "://" + req.get('host')}, function(result){
                     res.send({ok:result});
                 });
             });

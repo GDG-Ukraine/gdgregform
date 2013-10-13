@@ -36,20 +36,20 @@ var prepareData = function (id, url, cb) {
                         if (user[userN] && data[userN]) fields[data[userN]] = user[userN];
                     }
                     if (event.fields && reg.fields) {
-                        var cfields = event.fields?JSON.parse(event.fields):{};
+                        var cfields = event.fields ? JSON.parse(event.fields) : {};
                         //console.log("parsing",reg.fields);
                         // temporary hack:
-                        if (reg.fields && reg.fields[1]=="'") reg.fields = reg.fields.replace(/'/g,'"');
-                        var cdata = reg.fields?JSON.parse(reg.fields):{};
+                        if (reg.fields && reg.fields[1] == "'") reg.fields = reg.fields.replace(/'/g, '"');
+                        var cdata = reg.fields ? JSON.parse(reg.fields) : {};
 
                         for (var fieldN in cfields) {
-                            fields[cfields[fieldN].title] = cdata[cfields[fieldN].name]||'';
+                            fields[cfields[fieldN].title] = cdata[cfields[fieldN].name] || '';
                         }
                     }
 
                     //var qrData = url + "/card/" + secret.crypt(reg.id + "");
-                    var qrData = vCardText(user,reg,url + "/card/" + secret.crypt(reg.id + ""));
-                   // console.log("qr:"+qrData);
+                    var qrData = vCardText(user, reg, url + "/card/" + secret.crypt(reg.id + ""));
+                    // console.log("qr:"+qrData);
                     var locals = {fields: fields, event: event, reg: reg, qrdata: qrData, user: user};
                     cb(locals);
                 });
@@ -58,15 +58,15 @@ var prepareData = function (id, url, cb) {
 };
 
 //var querystring = require("querystring");
-var vCardText = function(user,reg,url) {
+var vCardText = function (user, reg, url) {
     var text =
-        "BEGIN:VCARD\n"+
-        "VERSION:2.1\n"+
-        "N:"+user.name+";"+user.surname+"\n"+
-        "EMAIL;TYPE=INTERNET:"+user.email+"\n"+
-        "NOTE:REG:"+reg.id+" EV:"+reg.event_id+"\n"+
-        "URL:"+url+"\n"+
-        "END:VCARD";
+        "BEGIN:VCARD\n" +
+            "VERSION:2.1\n" +
+            "N:" + user.name + ";" + user.surname + "\n" +
+            "EMAIL;TYPE=INTERNET:" + user.email + "\n" +
+            "NOTE:REG:" + reg.id + " EV:" + reg.event_id + "\n" +
+            "URL:" + url + "\n" +
+            "END:VCARD";
     //return querystring.stringify(text);
     return encodeURIComponent(text);
 
@@ -90,12 +90,15 @@ exports.createMailer = function (sender) {
 
     var smtpTransport = nodemailer.createTransport("SMTP", /* mailConfig*/config);
     return {
-        sendEmail: function (id, url, cb) {
+        sendEmail: function (options, cb) {
+            var id = options.id;
+            var url = options.url;
+
             prepareData(id, url, function (locals) {
-                var html = ejs.render(fs.readFileSync('./public/card.html') + "", locals);
+                var html = ejs.render(fs.readFileSync(options.template) + "", locals);
                 juice.juiceContent(html, {url: url + "/"}, function (err, html) {
                     if (err) {
-                        console.log("Error:",err);
+                        console.log("Error:", err);
                         cb(false);
                         return;
                     }
@@ -104,17 +107,19 @@ exports.createMailer = function (sender) {
                     var mailOptions = {
                         from: "GDG Kyiv <mail@gdg.kiev.ua>", // sender address
                         to: locals.user.email,
-                        subject: "✔ Registration confirmation to " + locals.event.title, // Subject line
+                        subject: options.title + locals.event.title, // Subject line
                         generateTextFromHTML: true,
                         forceEmbeddedImages: true,
                         html: html,
                         attachments: [
-                            {
-                                filePath: 'http://chart.googleapis.com/chart?chs=400x400&cht=qr&chl='+locals.qrdata+'&choe=UTF-8',
-                                fileName: 'RegistrationQR.png'
-                            }
                         ]
                     };
+                    if (options.qr) {
+                        mailOptions.push({
+                            filePath: 'http://chart.googleapis.com/chart?chs=400x400&cht=qr&chl=' + locals.qrdata + '&choe=UTF-8',
+                            fileName: 'RegistrationQR.png'
+                        });
+                    }
                     smtpTransport.sendMail(mailOptions, function (error, response) {
                         if (error) {
                             console.log(error);
@@ -123,14 +128,22 @@ exports.createMailer = function (sender) {
                             console.log("Message sent: " + response.message);
                             cb(true);
                         }
-
-
                     });
                 });
             })
         },
+        sendCardEmail: function (options, cb) {
+            options.title = "✔ Registration confirmation to ";
+            options.qr = true;
+            optiosn.template = "./public/card.html";
+            return this.sendEmail(options, cb);
+        },
+        sendConfirmEmail: function (options, cb) {
+            options.title = "Please confirm your visit to ";
+            options.template = "./public/confirmation/mail.html";
+            return this.sendEmail(options, cb);
+        },
         close: function () {
-            // if you don't want to use this transport object anymore, uncomment following line
             smtpTransport.close(); // shut down the connection pool, no more messages
 
         }

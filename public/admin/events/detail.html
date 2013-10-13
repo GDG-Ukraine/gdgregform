@@ -73,6 +73,22 @@
              <input name="max_regs" ng-model="e.max_regs" ng-disabled='e.max_regs==null'>
          </div>
     </div>
+    <div class="control-group ">
+         <label class="control-label">Testing event</label>
+         <div class="controls">
+             <input type="checkbox" ng-model="e.testing"> Event will be
+                <span class="text-error" ng-show="e.testing">hidden from</span>
+                <span class="text-success" ng-hide="e.testing">shown on</span>
+                the list of events.
+         </div>
+    </div>
+    <div class="control-group ">
+         <label class="control-label">Require confirmation</label>
+         <div class="controls">
+             <input type="checkbox" ng-model="e.require_confirmation">
+
+         </div>
+    </div>
 
     <div class="control-group " ng-class="{error: myForm.place.$invalid}">
          <label class="control-label">Host</label>
@@ -143,26 +159,28 @@
         <tr>
             <th>
                 <input ng-disabled="keys(accepted)==e.participants.length ||approving" type="checkbox" ng-show="eFilter!='approved'" ng-model='allSelected' ng-click='selectAll()'> Approved</th>
-            <th>Name</th>
             <th>Surname</th>
+            <th>Name</th>
             <th>e-mail</th>
             <th></th>
         </tr>
         </thead>
         <tbody>
-        <tr ng-repeat="p in e.registrations | filter:filterEvent | filter:search | orderBy:'participant.name'" class="clickable">
+        <tr ng-repeat="p in e.registrations | filter:filterEvent | filter:search | orderBy:'participant.surname'" class="clickable">
             <td>
                 <input type="checkbox" ng-model='toAccept[p.id]' ng-hide='p.accepted' ng-disabled="approving">
                 <i class="icon-ok" ng-show='p.accepted'></i>
+                <i class="icon-question-sign" style='color:blue' bs-tooltip="'Not confirmed'" ng-show='e.require_confirmation && !p.confirmed'></i>
+                <i class="icon-ok-sign" style='color:green' bs-tooltip="'Confirmed'" ng-show='e.require_confirmation && p.confirmed'></i>
             </td>
-            <td>{{p.participant.name}}</td>
             <td>{{p.participant.surname}}</td>
+            <td>{{p.participant.name}}</td>
             <td>{{p.participant.email}}</td>
             <td>
-                <button class='btn btn-danger' ng-controller='notificationDeleteAppCtrl' bs-modal="'confirmDeleteApp.html'"><i class="icon-trash"></i></button>
-                <button class='btn' ng-click='show(p.googler_id)'><i class='icon-user'></i></button>
-                <button class='btn'  ng-click='showCard(p.id)'><i class="icon-credit-card"></i></button>
-                <button class='btn' ng-controller='notificationResendCtrl' bs-modal="'confirmSend.html'"><i class="icon-envelope"></i></button>
+                <button class='btn btn-danger' ng-controller='notificationDeleteAppCtrl' bs-tooltip="'Delete application'" bs-modal="'confirmDeleteApp.html'"><i class="icon-trash"></i></button>
+                <button class='btn' ng-click='show(p.googler_id)' bs-tooltip="'Show participants\'s details'"><i class='icon-user'></i></button>
+                <button class='btn'  ng-click='showCard(p.id)' bs-tooltip="'Application info'"><i class="icon-credit-card"></i></button>
+                <button class='btn' ng-controller='notificationResendCtrl' bs-tooltip="'Send confirmation email'" bs-modal="'confirmSend.html'"><i class="icon-envelope"></i></button>
             </td>
         </tr>
         </tbody>
@@ -176,9 +194,13 @@
             <input type="checkbox" ng-model='sendEmail' ng-init="sendEmail= true"  ng-disabled="approving">Send email
       </label>
       <div class="controls">
-        <button class='btn btn-info' ng-click='approve()' ng-disabled="approving">
+        <button class='btn btn-primary' ng-click='approve()' ng-disabled="approving">
             Approve {{toAcceptArray.length}} application<span ng-show='toAcceptArray.length>1'>s</span>
             <i class="icon-spinner icon-spin" ng-show="approving"></i>
+        </button>
+        <button class='btn btn-info' ng-click='sendConfirm()' ng-disabled="approving">
+              Send confirmation request to {{toAcceptArray.length}} application<span ng-show='toAcceptArray.length>1'>s</span>
+              <i class="icon-spinner icon-spin" ng-show="sending"></i>
         </button>
       </div>
 

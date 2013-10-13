@@ -6,5 +6,6 @@ module.exports = require('../db.js').sequelize.define('gdg_events_participation'
 	"fields":Sequelize.TEXT,
     "register_date": { type: Sequelize.DATE, defaultValue: Sequelize.NOW },
     "accepted": Sequelize.BOOLEAN,
-    "visited": Sequelize.BOOLEAN
+    "visited": Sequelize.BOOLEAN,
+    "confirmed": Sequelize.BOOLEAN
 });

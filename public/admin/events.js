@@ -87,7 +87,7 @@ angular.module('gdgorgua')
                return $scope.e.hidden;
            }
            $scope.isHidden = function(field) {
-               if (!$scope.e.hidden) return false;
+               if (!$scope.e || !$scope.e.hidden) return false;
 
                return getHidden().indexOf(field.name) >= 0;
            }
@@ -203,6 +203,22 @@ angular.module('gdgorgua')
                         });
                         $scope.toAccept = {};
                         $scope.allSelected = false;
+                    }
+                    $scope.sendingFailed = !success;
+
+                    $scope.refresh();
+                });
+        };
+        $scope.sendConfirm = function() {
+            if ($scope.toAcceptArray.length == 0) return;
+            $scope.sending = true;
+
+            $http.post('/api/events/'+$routeParams.eventId+'/send-confirm',{registrations:$scope.toAcceptArray,sendEmail: $scope.sendEmail})
+                .success(function(res) {
+                    var success = res.ok;
+                    $scope.sending = false;
+                    if (success) {
+
                     }
                     $scope.sendingFailed = !success;
 

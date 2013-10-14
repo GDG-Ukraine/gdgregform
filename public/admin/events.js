@@ -218,7 +218,8 @@ angular.module('gdgorgua')
                     var success = res.ok;
                     $scope.sending = false;
                     if (success) {
-
+                        $scope.toAccept = {};
+                        $scope.allSelected = false;
                     }
                     $scope.sendingFailed = !success;
 

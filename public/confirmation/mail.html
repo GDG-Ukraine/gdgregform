@@ -3,31 +3,9 @@
 <head>
     <title><%= event.title %>: Confirmation</title>
     <style>
-        table {
-            width: 100%;
-            border-spacing:0;
-            border-collapse:collapse;
-        }
-        td {
-            border: solid 1px #BBB;
-            padding: 10px;
-            margin: 0;
-        }
-        .header {
-            background-color: #EEE;
-        }
-        .img {
-            text-align: center;
-        }
-        .notapproved {
-            background-color: red;
-            color: yellow;
-            text-align: center;
-            font-size: 2em;
-            font-family: monospace;
-        }
         div {
             text-align: justify;
+            padding: 5px;
         }
     </style>
 </head>
@@ -38,6 +16,8 @@
 
     <div><%= event.desc %></div>
 
-    <div>If you really going to visit this event please visit this link: <a href='' </div>
+    <div>If you really going to visit this event please visit this link: <a href='<%= confirm.url %>'><%= confirm.url %></a>.
+        You can ignore this email if you're not going to attend.
+    </div>
 </body>
 </html>

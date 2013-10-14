@@ -126,7 +126,7 @@ exports.createMailer = function (sender) {
                             console.log(error);
                             cb(false);
                         } else {
-                            console.log("Message sent: " + response.message);
+                            console.log("Message to "+locals.user.email+" sent: " + response.message);
                             cb(true);
                         }
                     });
@@ -162,5 +162,19 @@ exports.setup = function (app) {
         prepareData(id, req.protocol + "://" + req.get('host'), function (locals) {
             res.render('card.html', locals);
         });
+    });
+    app.get('/confirm/:id',function showCard(req, res) {
+        var id;
+        try {
+            id = secret.decrypt(req.params.id);
+        } catch (err) {
+            return res.send(400, "Invalid confirmation number");
+        }
+        models.participations.find(id).success(function (reg){
+            reg.updateAttributes({confirmed:true}).success(function() {
+                res.render('confirmation/confirmed.html');
+            });
+        });
+
     });
 };

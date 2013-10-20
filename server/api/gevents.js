@@ -70,6 +70,8 @@ module.exports = function (app) {
         if (!auth.check(req, res)) return;
         if (req.body.fields) req.body.fields = JSON.stringify(req.body.fields);
         if (req.body.hidden) req.body.hidden = JSON.stringify(req.body.hidden);
+        if (req.user.filter_place != req.body.host_gdg_id && req.user.godmode!=1)
+            return res.end("You can't change host gdg id - you'll loose control on it");
         models.gevents.find(req.params.id).success(function (event) {
             if (!checkAccessToEvent(req, res, event.host_gdg_id)) return;
             event.updateAttributes(req.body)

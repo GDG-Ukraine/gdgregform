@@ -97,9 +97,9 @@ exports.createMailer = function (sender) {
 
             prepareData(id, url, function (locals) {
                 var html = ejs.render(fs.readFileSync(options.template) + "", locals);
-                juice.juiceContent(html, {url: url + "/"}, function (err, html) {
+                juice.juiceContent(html, options.htmlPath?{url:options.htmlPath}:{url: url + "/"}, function (err, html) {
                     if (err) {
-                        console.log("Error:", err);
+                        console.log("Error creating HTML for sending email:", err);
                         cb(false);
                         return;
                     }
@@ -142,6 +142,9 @@ exports.createMailer = function (sender) {
         sendConfirmEmail: function (options, cb) {
             options.title = "Please confirm your visit to ";
             options.template = "./public/confirmation/mail.html";
+            console.log(options.url);
+            options.htmlPath = options.url+"/confirmation/";
+
             return this.sendEmail(options, cb);
         },
         close: function () {

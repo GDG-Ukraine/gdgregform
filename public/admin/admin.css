@@ -100,3 +100,8 @@ input.ng-invalid {
     border: solid 1px red;
     box-shadow: 0 0 12px 1px red;
 }
+
+span.clickable {
+    border-bottom: dashed 1px blue;
+    cursor: text;
+}

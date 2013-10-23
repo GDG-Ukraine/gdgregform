@@ -134,8 +134,11 @@ angular.module('gdgorgua')
             for (var k in obj) r++;
             return r;
         }
-
-
+        $scope.fromEmail = $window.localStorage.getItem('fromEmail');
+        if (!$scope.fromEmail) $scope.fromEmail = "mail@gdg.kiev.ua";
+        $scope.$watch('fromEmail',function(nv) {
+            $window.localStorage.setItem('fromEmail',nv);
+        })
 
         if ($window.sessionStorage) {
             try {
@@ -193,7 +196,10 @@ angular.module('gdgorgua')
             if ($scope.toAcceptArray.length == 0) return;
             $scope.approving = true;
 
-            $http.post('/api/events/'+$routeParams.eventId+'/approve',{registrations:$scope.toAcceptArray,sendEmail: $scope.sendEmail})
+            $http.post('/api/events/'+$routeParams.eventId+'/approve',{
+                registrations:$scope.toAcceptArray,sendEmail: $scope.sendEmail,
+                fromEmail:$scope.fromEmail
+            })
                 .success(function(res) {
                     var success = res.ok;
                     $scope.approving = false;
@@ -213,7 +219,10 @@ angular.module('gdgorgua')
             if ($scope.toAcceptArray.length == 0) return;
             $scope.sending = true;
 
-            $http.post('/api/events/'+$routeParams.eventId+'/send-confirm',{registrations:$scope.toAcceptArray,sendEmail: $scope.sendEmail})
+            $http.post('/api/events/'+$routeParams.eventId+'/send-confirm',{
+                registrations:$scope.toAcceptArray,sendEmail: $scope.sendEmail,
+                fromEmail:$scope.fromEmail
+            })
                 .success(function(res) {
                     var success = res.ok;
                     $scope.sending = false;

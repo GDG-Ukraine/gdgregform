@@ -107,13 +107,13 @@
         </div>
         <div class="modal-body">
             Are you sure you want to send invitation email to <b>{{p.participant.email}}</b>?
-
-            <div ng-show='!accepted[p.id]' class='alert alert-error'>The application is already accepted! Email probably was already sent.</div>
+            <div ng-show='p.accepted' class='alert alert-warn'>The application is already accepted! Email probably was already sent.</div>
+            <div ng-show='!p.accepted' class='alert alert-error'>The application is not accepted! Don't give false promises</div>
 
         </div>
         <div class="modal-footer">
             <button class="btn cancel" ng-click="dismiss()" ng-disabled='sending'>Cancel</button>
-            <button class="btn btn-primary" ng-click="resend(p.id)" ng-disabled='sending'>
+            <button class="btn btn-primary" ng-click="resend(p.participant.id)" ng-disabled='sending'>
                 <i class="icon-spinner icon-spin" ng-show='sending'></i> Resend<span ng-show='sending'>ing...</span></button>
         </div>
 
@@ -127,7 +127,7 @@
         </div>
         <div class="modal-body">
             Are you sure you want to delete application of <b>{{p.participant.name}} ({{p.participant.email}})</b>?
-            <div ng-show='accepted[p.id]' class='alert alert-error'>The application is already accepted!</div>
+            <div ng-show='p.accepted' class='alert alert-error'>The application is already accepted!</div>
 
         </div>
         <div class="modal-footer">
@@ -191,7 +191,7 @@
     </div>
     <div ng-show='toAcceptArray.length >0' class="control-group">
       <label class="control-label">
-            <input type="checkbox" ng-model='sendEmail' ng-init="sendEmail= true"  ng-disabled="approving">Send email
+
       </label>
       <div class="controls">
         <button class='btn btn-primary' ng-click='approve()' ng-disabled="approving">
@@ -202,6 +202,12 @@
               Send confirmation request to {{toAcceptArray.length}} application<span ng-show='toAcceptArray.length>1'>s</span>
               <i class="icon-spinner icon-spin" ng-show="sending"></i>
         </button>
+        <div>
+            <input type="checkbox" ng-model='sendEmail' ng-init="sendEmail= true"  ng-disabled="approving"> Send email
+            from <span class="clickable" ng-show="!fromEmailEditing" ng-click="fromEmailEditing=true">{{fromEmail}}</span>
+            <input ng-show="fromEmailEditing" ng-model="fromEmail">
+        </div>
+
       </div>
 
     </div>
@@ -269,11 +275,14 @@
             <h4>Deleting event "{{e.title}}"</h4>
         </div>
         <div class="modal-body">
-            If you delete this event, all registration would be also deleted.
+            If you delete this event, <ul><li>all registrations would be also <b>deleted</b></li><li><b>no</b> visiting history would he recorded</li></ul>
+            <div>
+                If you're really sure, enter "<kbd>sure</kbd>":<input ng-model="checkTxt">
+            </div>
         </div>
         <div class="modal-footer">
             <button class="btn cancel" ng-click="dismiss()">Cancel</button>
-            <button class="btn btn-danger" ng-click="destroy();dismiss()">Delete</button>
+            <button class="btn btn-danger" ng-disabled="checkTxt!='sure'" ng-click="destroy();dismiss()">Delete</button>
         </div>
 
     </script>

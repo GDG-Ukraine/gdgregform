@@ -121,7 +121,7 @@ module.exports = function (app) {
         if (!req.body.registrations) return res.send(400, "Bad Request - no participants to approve");
         var sender, waitFor;
         if (req.body.sendEmail)
-            sender = card.createMailer(req.user);
+            sender = card.createMailer(req.user,req.body.fromEmail);
         models.participations.findAll({ where: {event_id: req.params.id}})
             .success(function (regs) {
                 var success = true;
@@ -163,7 +163,7 @@ module.exports = function (app) {
         if (!req.body.registrations) return res.send(400, "Bad Request - no participants to approve");
         var sender, waitFor;
 
-        sender = card.createMailer(req.user);
+        sender = card.createMailer(req.user,req.body.fromEmail);
 
         models.participations.findAll({ where: {event_id: req.params.id}})
             .success(function (regs) {
@@ -179,7 +179,6 @@ module.exports = function (app) {
                                     res.send({ok: success});
                                 }
                             };
-                            console.log("Sending confirmation request to")
                             sender.sendConfirmEmail({id: reg.id, url: req.protocol + "://" + req.get('host')}, sendCb);
                         };
                         approve(regs[i]);

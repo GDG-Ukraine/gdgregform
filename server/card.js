@@ -74,7 +74,8 @@ var vCardText = function (user, reg, url) {
 };
 
 //var mailConfig = require('../config.js').mail;
-exports.createMailer = function (sender) {
+exports.createMailer = function (sender,from) {
+    console.log("mailer from",from);
     var config = {
         host: "smtp.gmail.com",
         secureConnection: true,
@@ -96,6 +97,7 @@ exports.createMailer = function (sender) {
             var url = options.url;
 
             prepareData(id, url, function (locals) {
+                locals.options = options;
                 var html = ejs.render(fs.readFileSync(options.template) + "", locals);
                 juice.juiceContent(html, options.htmlPath?{url:options.htmlPath}:{url: url + "/"}, function (err, html) {
                     if (err) {
@@ -106,15 +108,22 @@ exports.createMailer = function (sender) {
                     html = html.replace(/&amp;/g, '&');
 
                     var mailOptions = {
-                        from: "GDG Kyiv <mail@gdg.kiev.ua>", // sender address
+                        //from: "GDG Kyiv <mail@gdg.kiev.ua>", // sender address
+                        from: "GDG Registration System <"+(from?from:"mail@gdg.kiev.ua")+">",
                         to: locals.user.email,
                         subject: options.title + locals.event.title, // Subject line
                         generateTextFromHTML: true,
-                        forceEmbeddedImages: true,
+                        forceEmbeddedImages: false,
                         html: html,
                         attachments: [
                         ]
                     };
+                    if (options.attach) options.attach.forEach(function(f) {
+                        mailOptions.attachments.push({
+                            filePath:options.htmlPath+f,
+                            filename:f
+                        })
+                    })
                     if (options.qr) {
                         mailOptions.attachments.push({
                             filePath: 'http://chart.googleapis.com/chart?chs=400x400&cht=qr&chl=' + locals.qrdata + '&choe=UTF-8',
@@ -126,7 +135,7 @@ exports.createMailer = function (sender) {
                             console.log(error);
                             cb(false);
                         } else {
-                            console.log("Message to "+locals.user.email+" sent: " + response.message);
+                            console.log("Message from "+mailOptions.from+" to "+locals.user.email+" sent: " + response.message);
                             cb(true);
                         }
                     });
@@ -142,7 +151,7 @@ exports.createMailer = function (sender) {
         sendConfirmEmail: function (options, cb) {
             options.title = "Please confirm your visit to ";
             options.template = "./public/confirmation/mail.html";
-            console.log(options.url);
+           // options.attach = ['gdg_org_ua.png'];
             options.htmlPath = options.url+"/confirmation/";
 
             return this.sendEmail(options, cb);

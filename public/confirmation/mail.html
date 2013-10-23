@@ -2,6 +2,7 @@
 <html>
 <head>
     <title><%= event.title %>: Confirmation</title>
+	<link rel="stylesheet" type="text/css" href="style.css" />
     <style>
         div {
             text-align: justify;
@@ -10,14 +11,18 @@
     </style>
 </head>
 <body>
-    <h1>Confirmation of your visit to <%= event.title %></h1>
-
-    <div>Please confirm that you will actually visit <%= event.title %></div>
-
-    <div><%= event.desc %></div>
-
-    <div>If you really going to visit this event please visit this link: <a href='<%= confirm.url %>'><%= confirm.url %></a>.
-        You can ignore this email if you're not going to attend.
-    </div>
+	<div class="container">
+		<div class="content">
+			<h1>Confirmation of your visit to <%= event.title %></h1>
+		
+			<div>Please confirm that you will actually visit <%= event.title %></div>
+		
+			<div><%= event.desc %></div>
+		
+			<div>If you really going to visit this event please visit this link: <a href='<%= confirm.url %>'><%= confirm.url %></a>.
+				You can ignore this email if you're not going to attend.
+			</div>
+		</div>
+	</div>
 </body>
 </html>

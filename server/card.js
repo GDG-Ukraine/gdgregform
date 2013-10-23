@@ -116,7 +116,7 @@ exports.createMailer = function (sender) {
                         ]
                     };
                     if (options.qr) {
-                        mailOptions.push({
+                        mailOptions.attachments.push({
                             filePath: 'http://chart.googleapis.com/chart?chs=400x400&cht=qr&chl=' + locals.qrdata + '&choe=UTF-8',
                             fileName: 'RegistrationQR.png'
                         });

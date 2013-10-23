@@ -7,14 +7,18 @@
 	<div class="container">
 		<div class="content">
 			<h1>Confirmation of your visit to <%= event.title %></h1>
-		
-			<div>Please confirm that you will actually visit <%= event.title %></div>
-		
-			<div><%= event.desc %></div>
-		
-			<div>If you really going to visit this event please visit this link: <a href='<%= confirm.url %>'><%= confirm.url %></a>.
-				You can ignore this email if you're not going to attend.
+			
+			<div class="main-text">
+				<div>Please confirm that you will actually visit <%= event.title %></div>
+			
+				<div><%= event.desc %></div>
+			
+				<div>If you really going to visit this event please visit this link: <a href='<%= confirm.url %>'><%= confirm.url %></a>.
+					You can ignore this email if you're not going to attend.
+				</div>
 			</div>
+				
+			<a href="http://gdg.org.ua" target="_blank"><img class="gdg-image" src="gdg_org_ua.png" alt="gdg.org.ua"></a>
 		</div>
 	</div>
 </body>

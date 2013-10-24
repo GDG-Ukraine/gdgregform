@@ -12,16 +12,27 @@ app.get('/api/participants', function (req, res) {
   })
 });
 
+function loadEventsForParticipant(p) {
+    var callback;
+    p.getEvents().success(function(events) {
+        var newP = db.copySqObject(p);
+        newP.events = events;
+        callback(newP);
+    });
+    return {
+        then:function(cb) { callback = cb; }
+    }
+
+
+}
+
 // get
 app.get('/api/participants/:id', function (req, res) {
     if (!auth.check(req,res,'god')) return;
     if (!req.params.id) return res.send("Invalid request");
     models.participants.find(req.params.id).success(function (p) {
-        p.getEvents().success(function(events) {
-            var newP = db.copySqObject(p);
-            newP.events = events;
-            res.json(newP);
-        });
+        loadEventsForParticipant(p)
+            .then(res.json.bind(res));
     }).error(app.onError(res));
 });
 
@@ -54,8 +65,11 @@ app.put('/api/participants/:id', function (req, res){
   if (!auth.check(req,res,'god')) return;
   models.participants.find(req.params.id).success(function (p) { 
 	p.updateAttributes(req.body)
-	  .success(function(p) { res.send(p);}).error(app.onError(res));
-  }).error(function(err) { console.log(err);res.send(err); }); 
+	  .success(function(p) {
+            loadEventsForParticipant(p)
+                .then(res.json.bind(res));
+        }).error(app.onError(res));
+  }).error(app.onError(res));
 });
 
 // delete

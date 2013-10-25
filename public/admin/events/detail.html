@@ -17,6 +17,7 @@
         <li ng-class="{active: tab == 'part'}"><a ng-click="tab='part'"><i class="icon-group"></i> Participants ({{ e.registrations.length}})</a></li>
         <li ng-class="{active: tab == 'fields'}"><a ng-click="tab='fields'"><i class="icon-tasks"></i> Custom fields</a></li>
         <li ng-class="{active: tab == 'form'}"><a ng-click="tab='form'"><i class="icon-tasks"></i> Form fields</a></li>
+        <li ng-class="{active: tab == 'invites'}"><a ng-click="tab='invites'"><i class="icon-envelope"></i> Invites</a></li>
     </ul>
 </div>
 
@@ -267,6 +268,8 @@
          </tbody>
      </table>
  </div>
+
+ <div ng-show="editing && tab=='invites'" ng-include="'events/invites.html'"></div>
 
 
     <script type="text/ng-template" id="eventDelete.html">

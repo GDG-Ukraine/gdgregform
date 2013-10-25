@@ -292,6 +292,22 @@ angular.module('gdgorgua')
             });
         }
 
+        $scope.generateInvites = function(n) {
+            $http.post('/api/events/'+$routeParams.eventId+'/invites', {number: n})
+                .then(function(r) {
+                    console.log("Invites generated", r);
+                    if (!r.data.ok) {
+                        console.log("Error while generating invites:",r.data);
+                        alert('Error while generating invites. Please open console for more details.');
+
+                    } else {
+                        alert(n+" invites generated");
+                        $scope.refresh();
+                    }
+
+                });
+        }
+
 
     })
     .controller('notificationResendCtrl',function($scope,$http,$routeParams){

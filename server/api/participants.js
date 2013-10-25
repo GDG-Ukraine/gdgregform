@@ -32,6 +32,7 @@ app.get('/api/participants/:id', function (req, res) {
     if (!req.params.id) return res.send("Invalid request");
     models.participants.find(req.params.id).success(function (p) {
         loadEventsForParticipant(p)
+            //.then(function(data) { res.json(data);});
             .then(res.json.bind(res));
     }).error(app.onError(res));
 });

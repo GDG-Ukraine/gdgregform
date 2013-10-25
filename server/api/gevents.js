@@ -13,10 +13,15 @@ module.exports = function (app) {
             .add(models.participations.findAll({where: {event_id: id}, include: [
                 {model: models.participants, as: "Participant"}
             ]}))
+            .add(models.invites.findAll({where: {event_id: id}}))
             .run()
             .success(function (results) {
                 var e = results[0],
-                    regs = results[1];
+                    regs = results[1],
+                    dbinvites = results[2];
+                var invites = dbinvites.map(function(i) { return i.selectedValues; });
+                //dbInvites.forEach(function(i) { invites.push(i.selectedValues); }
+                console.log("loaded invites for ", id, invites);
                 if (!e) {
                     cb("no event", null);
                     return;
@@ -32,6 +37,7 @@ module.exports = function (app) {
                 }
                 var nE = e.values;
                 nE.registrations = regs;
+                nE.invites = invites;
                 cb(null, nE);
             }).error(function (e) {
                 cb("Cant load" + e, null);
@@ -205,7 +211,7 @@ module.exports = function (app) {
 
     app.post('/api/events/:id/delete', function (req, res) {
         if (!auth.check(req, res)) return false;
-        if (!req.body.id) return res.send(400, "Bad Request - no participation to delete");
+        if (!req.params.id) return res.send(400, "Bad Request - no participation to delete");
         //models.participations.find({ where: {event_id: req.params.id, googler_id:req.body.id}})
         models.participations.find({ where: {event_id: req.params.id, id: req.body.id}})
             .success(function (reg) {
@@ -218,8 +224,23 @@ module.exports = function (app) {
             });
     });
     var https = require('https');
-
     // generate report
+    app.post('/api/events/:id/invites', function(req, res) {
+        if (!auth.check(req, res)) return false;
+        console.log("Generating ", req.body.number,"invites");
+        chainer = new Sequelize.Utils.QueryChainer();
+        for (var i = 0;i<req.body.number;i++) {
+            var code = require('../secret').crypt('invite'+i+(Math.random()));
+            console.log('code:'+code);
+            chainer.add(models.invites.create({code: code, event_id: req.params.id,used:false}));
+        }
+        chainer
+            .run()
+            .success(function() {
+                res.json({ok:true});
+            })
+            .error(app.onError(res));
+    })
 
     app.post('/api/events/:id/report', function (req, res) {
         if (!auth.check(req, res)) return false;

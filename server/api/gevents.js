@@ -45,8 +45,9 @@ module.exports = function (app) {
     }
 
     function checkAccessToEvent(req, res, id) {
-        if (req.user.filter_place && req.user.filter_place != id) {
+        if (req.user.filter_place && req.user.filter_place != id && !req.user.godmode) {
             res.send(401, "User is not allowed to access this GDG host");
+	    console.log("Disallowing access to event ",id," for ",req.user);
             return false;
         }
         return true;

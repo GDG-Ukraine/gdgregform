@@ -103,6 +103,7 @@ exports.check = function(req,res, checkMode) {
     //if (allowed) console.log(req.user.filter_place, req.params.id);
     if (allowed && checkMode=='god') allowed = req.user.godmode;
     if (allowed && checkMode=='event') allowed = req.user.filter_place == req.params.id;
+    if (!allowed) console.log("Not allowing ",JSON.stringify(req.user)," to get", req.params.id);
     if (!allowed) res.send(403,"Not authorized");
     return allowed;
 };

@@ -60,7 +60,11 @@ module.exports = function (app) {
         loadEvent(req.params.id, function (err, data) {
             if (err) app.onError(res)(err);
             else if (!checkAccessToEvent(req, res, data.host_gdg_id)) return;
-            else res.send(data);
+            else {
+                prepareObj(data);
+                console.log(data);
+                res.send(data);
+            }
         });
     });
 // create 
@@ -354,3 +358,14 @@ module.exports = function (app) {
     });
 }
 
+var i = 0;
+function prepareObj(obj) {
+    for(var k in obj)
+    {
+        if (!obj.hasOwnProperty(k) || k[0]=='_' || k == 'include' || k =='options') delete obj[k];
+        else if (typeof(obj[k])=='object') {
+            prepareObj(obj[k]);
+        }
+    }
+
+}

@@ -21,7 +21,7 @@ module.exports = function (app) {
                     dbinvites = results[2];
                 var invites = dbinvites.map(function(i) { return i.selectedValues; });
                 //dbInvites.forEach(function(i) { invites.push(i.selectedValues); }
-                console.log("loaded invites for ", id, invites);
+                //console.log("loaded invites for ", id, invites);
                 if (!e) {
                     cb("no event", null);
                     return;
@@ -32,7 +32,7 @@ module.exports = function (app) {
                     else e.hidden = JSON.parse(e.hidden);
                 }
                 for (var n = 0; n < regs.length; n++) {
-                    regs[n] = db.copySqObject(regs[n]);
+                    regs[n] = regs[n].values;
                     regs[n].cardUrl = secret.crypt(regs[n].id + "");
                 }
                 var nE = e.values;
@@ -62,7 +62,7 @@ module.exports = function (app) {
             else if (!checkAccessToEvent(req, res, data.host_gdg_id)) return;
             else {
                 prepareObj(data);
-                console.log(data);
+                //console.log(data);
                 res.send(data);
             }
         });

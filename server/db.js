@@ -16,6 +16,7 @@ exports.copySqObject = function(obj) {
     for (var attr in obj) {
         if (
             attr != '__options' &&
+            attr != '_previousDataValues' &&
             attr != 'selectedValues' &&
             attr != 'hasPrimaryKeys' &&
             attr != 'isNewRecord' &&

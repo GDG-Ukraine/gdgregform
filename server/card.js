@@ -9,7 +9,7 @@ var path = require('path'),
     ;
 
 var prepareData = function (id, url, cb) {
-
+    console.log("preparing card for for ",id);
     models.participations.find(id)
         .success(function (reg) {
             reg.getEvent().success(function (event) {
@@ -32,7 +32,7 @@ var prepareData = function (id, url, cb) {
                         "additional_info": "Additional"
                     };
                     var fields = {};
-                    for (var userN in user) {
+                    for (var userN in user.values) {
                         if (user[userN] && data[userN]) fields[data[userN]] = user[userN];
                     }
                     if (event.fields && reg.fields) {

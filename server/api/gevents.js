@@ -285,7 +285,7 @@ module.exports = function (app) {
             for (var n = 0; n < event.registrations.length; n++) {
                 var p = event.registrations[n].participant;
                 var reg = event.registrations[n];
-                var fdata= {}};
+                var fdata= {};
                 try { fdata = JSON.parse(reg.fields); } catch(err) {
                     console.log("Error parsing JSON fields:",reg.fields);
                 }

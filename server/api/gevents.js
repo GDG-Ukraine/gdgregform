@@ -285,10 +285,12 @@ module.exports = function (app) {
             for (var n = 0; n < event.registrations.length; n++) {
                 var p = event.registrations[n].participant;
                 var reg = event.registrations[n];
-                var fdata= {};
-                try { fdata = JSON.parse(reg.fields); } catch(err) {
+                var fdata;
+                try {
+                    fdata = JSON.parse(reg.fields); } catch(err) {
                     console.log("Error parsing JSON fields:",reg.fields);
                 }
+                if (!fdata) fdata = {};
                 if (req.query.mode == 'approved' && !reg.accepted) continue;
                 if (req.query.mode == 'waiting' && reg.accepted) continue;
                 var cols = [];

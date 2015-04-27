@@ -15,7 +15,7 @@ module.exports = function (app) {
             ]}))
             .add(models.invites.findAll({where: {event_id: id}}))
             .run()
-            .success(function (results) {
+            .then(function (results) {
                 var e = results[0],
                     regs = results[1],
                     dbinvites = results[2];
@@ -72,7 +72,7 @@ module.exports = function (app) {
         if (!auth.check(req, res)) return;
         if (req.user.filter_place) req.body.host_gdg_id = req.user.filter_place;
         if (req.body.fields) req.body.fields = JSON.stringify(req.body.fields);
-        models.gevents.create(req.body).success(function (p) {
+        models.gevents.create(req.body).then(function (p) {
             res.send(p);
         }).error(app.onError(res));
     });
@@ -83,10 +83,10 @@ module.exports = function (app) {
         if (req.body.hidden) req.body.hidden = JSON.stringify(req.body.hidden);
         if (req.user.filter_place != req.body.host_gdg_id && req.user.godmode!=1)
             return res.end("You can't change host gdg id - you'll loose control on it");
-        models.gevents.find(req.params.id).success(function (event) {
+        models.gevents.find(req.params.id).then(function (event) {
             if (!checkAccessToEvent(req, res, event.host_gdg_id)) return;
             event.updateAttributes(req.body)
-                .success(function (p) {
+                .then(function (p) {
                     res.send(p);
                 }).error(app.onError(res));
         }).error(app.onError(res));
@@ -94,17 +94,17 @@ module.exports = function (app) {
 // delete
     app.delete('/api/events/:id', function (req, res) {
         if (!auth.check(req, res)) return;
-        models.gevents.find(req.params.id).success(function (event) {
+        models.gevents.find(req.params.id).then(function (event) {
             if (!checkAccessToEvent(req, res, event.host_gdg_id)) return;
 
-            models.participations.findAll({where: {event_id: req.params.id}}).success(function (regs) {
+            models.participations.findAll({where: {event_id: req.params.id}}).done(function (regs) {
                 var chain = new (require('sequelize')).Utils.QueryChainer;
 
                 regs.forEach(function (reg) {
                     chain.add(reg.destroy());
                 });
-                chain.run().success(function () {
-                    event.destroy().success(function () {
+                chain.run().done(function () {
+                    event.destroy().then(function () {
                         res.send({ok: true});
                     }).error(app.onError(res));
                 });
@@ -115,7 +115,7 @@ module.exports = function (app) {
     app.get('/api/events', function (req, res) {
         if (!auth.check(req, res)) return;
         var filter = req.user && req.user.filter_place ? {where: {host_gdg_id: req.user.filter_place}} : {};
-        models.gevents.findAll(filter).success(function (events) {
+        models.gevents.findAll(filter).then(function (events) {
             res.send(events);
         }).error(app.onError(res));
     });
@@ -134,7 +134,7 @@ module.exports = function (app) {
         if (req.body.sendEmail)
             sender = card.createMailer(req.user,req.body.fromEmail);
         models.participations.findAll({ where: {event_id: req.params.id}})
-            .success(function (regs) {
+            .then(function (regs) {
                 var success = true;
                 waitFor = 0;
                 for (var i = 0; i < regs.length; i++) {
@@ -152,7 +152,7 @@ module.exports = function (app) {
                                     res.send({ok: success});
                                 }
                             };
-                            reg.updateAttributes({accepted: true}).success(function () {
+                            reg.updateAttributes({accepted: true}).done(function () {
 
                                 if (sender)
                                     sender.sendCardEmail({id: reg.id, url: req.protocol + "://" + req.get('host')}, sendCb);
@@ -177,7 +177,7 @@ module.exports = function (app) {
         sender = card.createMailer(req.user,req.body.fromEmail);
 
         models.participations.findAll({ where: {event_id: req.params.id}})
-            .success(function (regs) {
+            .then(function (regs) {
                 var success = true;
                 waitFor = 0;
                 for (var i = 0; i < regs.length; i++) {
@@ -205,7 +205,7 @@ module.exports = function (app) {
         if (!req.body.id) return res.send(400, "Bad Request - no participation to send");
         var sender = card.createMailer(req.user);
         models.participations.find({ where: {event_id: req.params.id, googler_id: req.body.id}})
-            .success(function (reg) {
+            .done(function (reg) {
                 sender.sendCardEmail({id: reg.id, url: req.protocol + "://" + req.get('host')}, function (result) {
                     res.send({ok: result});
                 });
@@ -219,9 +219,9 @@ module.exports = function (app) {
         if (!req.params.id) return res.send(400, "Bad Request - no participation to delete");
         //models.participations.find({ where: {event_id: req.params.id, googler_id:req.body.id}})
         models.participations.find({ where: {event_id: req.params.id, id: req.body.id}})
-            .success(function (reg) {
-                reg.destroy().success(function () {
-                    //reg.updateAttributes({deleted: true}).success(function () {
+            .done(function (reg) {
+                reg.destroy().then(function () {
+                    //reg.updateAttributes({deleted: true}).done(function () {
                     res.send({ok: true});
                 }).fail(function () {
                         res.send({ok: false})
@@ -241,7 +241,7 @@ module.exports = function (app) {
         }
         chainer
             .run()
-            .success(function() {
+            .then(function() {
                 res.json({ok:true});
             })
             .error(app.onError(res));

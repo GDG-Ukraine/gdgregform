@@ -6,7 +6,7 @@ module.exports = function(app) {
 // list
     app.get('/api/places', function (req, res) {
         if (!auth.check(req,res)) return;
-        models.places.findAll().success(function(places) {
+        models.places.findAll().then(function(places) {
             res.send(places);
         }).error(app.onError(res));
     });

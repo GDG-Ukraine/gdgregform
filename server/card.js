@@ -11,9 +11,9 @@ var path = require('path'),
 var prepareData = function (id, url, cb) {
     console.log("preparing card for for ",id);
     models.participations.find(id)
-        .success(function (reg) {
-            reg.getEvent().success(function (event) {
-                reg.getParticipant().success(function (user) {
+        .done(function (reg) {
+            reg.getEvent().done(function (event) {
+                reg.getParticipant().done(function (user) {
                     var data = {
                         "name": "Name",
                         "surname": "Surname",
@@ -182,8 +182,8 @@ exports.setup = function (app) {
         } catch (err) {
             return res.send(400, "Invalid confirmation number");
         }
-        models.participations.find(id).success(function (reg){
-            reg.updateAttributes({confirmed:true}).success(function() {
+        models.participations.find(id).done(function (reg){
+            reg.updateAttributes({confirmed:true}).done(function() {
                 res.render('confirmation/confirmed.html');
             });
         });

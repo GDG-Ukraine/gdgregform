@@ -21,13 +21,13 @@ module.exports = function (app) {
         if (req.params[1] == 'contact_form.html')
             res.redirect("/events/" + eventId + "/register");
         else if (req.params[1] == 'register') {
-            models.gevents.find(eventId).success(function (e) {
+            models.gevents.find(eventId).done(function (e) {
                 if (!e) res.end("No such event");
                 else {
-                    e.getPlace().success(function (place) {
+                    e.getPlace().done(function (place) {
                         if (place.logo[0]=='/') place.logo = 'http://gdg.org.ua'+place.logo;
                         if (e.closereg && (new Date(e.closereg)) < (new Date())) {
-                            models.gevents.findAll({order: 'date', limit: 5, where: ["date > NOW()", "closereg > NOW()"] }).success(function (events) {
+                            models.gevents.findAll({order: 'date', limit: 5, where: ["date > NOW()", "closereg > NOW()"] }).done(function (events) {
                                 res.render('regclosed.html', { event: e, events: events, place:place});
                             });
                         }

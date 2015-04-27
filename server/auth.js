@@ -14,7 +14,7 @@ everyauth.everymodule
 var nextCheck,admins;
 var getAllowedUers = function(cb) {
   if (!nextCheck || nextCheck < Date.now()) {
-     require('./models').admins.findAll().success(function (newAdmins) {
+     require('./models').admins.findAll().done(function (newAdmins) {
          admins = newAdmins;
          nextCheck = new Date();
          nextCheck.setMinutes(nextCheck.getMinutes()+5);

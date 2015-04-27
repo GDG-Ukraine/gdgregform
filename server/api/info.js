@@ -10,7 +10,7 @@ module.exports = function(app) {
             user: req.user
         };
         if (req.user.filter_place) {
-            models.places.find(req.user.filter_place).success(function(place) {
+            models.places.find(req.user.filter_place).done(function(place) {
                 info.place = place.values;
                 res.send(info);
             });

@@ -67,7 +67,7 @@ module.exports = function (app) {
             }
         });
     });
-// create 
+// create
     app.post('/api/events', function (req, res) {
         if (!auth.check(req, res)) return;
         if (req.user.filter_place) req.body.host_gdg_id = req.user.filter_place;
@@ -114,7 +114,7 @@ module.exports = function (app) {
 // list
     app.get('/api/events', function (req, res) {
         if (!auth.check(req, res)) return;
-        var filter = req.user && req.user.filter_place ? {where: {host_gdg_id: req.user.filter_place}} : {};
+        var filter = req.user && req.user.filter_place && req.user.godmode!=1 ? {where: {host_gdg_id: req.user.filter_place}} : {};
         models.gevents.findAll(filter).then(function (events) {
             res.send(events);
         }).error(app.onError(res));

@@ -302,7 +302,7 @@ module.exports = function (app) {
                             s = fdata[field];
                             if (!s) s = '';
                         }
-                        if (s.indexOf('"') >= 0) s = s.replace(/"/g, '""');
+                        if (typeof s === 'string' && s.indexOf('"') >= 0) s = s.replace(/"/g, '""');
                         cols.push(s);
                     }
                 });

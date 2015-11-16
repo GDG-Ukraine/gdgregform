@@ -6,8 +6,7 @@ module.exports = function (app) {
         models = require('./models'),
         secret = require('./secret'),
         ejs = require('ejs'),
-        fs = require('fs'),
-        juice = require('juice')
+        fs = require('fs')
         ;
 
 // for static serving

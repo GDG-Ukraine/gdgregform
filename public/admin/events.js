@@ -177,7 +177,7 @@ angular.module('gdgorgua')
         $scope.toAccept = {};
 
         $scope.$watch('e.registrations', function(regs) {
-           $scope.accepted = regs? regs.filter(function(r) { return r.accepted; }).length : 0;
+           $scope.accepted = regs? regs.filter(function(r) { return r.gdg_events_participation.accepted; }).length : 0;
         });
 
 
@@ -239,7 +239,7 @@ angular.module('gdgorgua')
         $scope.selectAll = function() {
             $scope.toAccept = {};
             for(var i in $scope.e.registrations) {
-                if (!$scope.e.registrations[i].accepted) $scope.toAccept[$scope.e.registrations[i].id] = $scope.allSelected;
+                if (!$scope.e.registrations[i].gdg_events_participation.accepted) $scope.toAccept[$scope.e.registrations[i].gdg_events_participation.id] = $scope.allSelected;
             }
         }
 
@@ -262,14 +262,14 @@ angular.module('gdgorgua')
                 $location.path('/');
             });
         };
-        $scope.show = function(id) {
+        $scope.showParticipant = function(id) {
             $location.path('/participants/'+id);
         };
 
         $scope.showCard = function(id) {
             var reg;
             $scope.e.registrations.forEach(function(r) { if (r.id==id) reg = r;});
-            if (reg) {
+            if (reg && reg.cardUrl) {
                 $window.open("/card/"+reg.cardUrl);
             } else {
                 console.log("No registrant found for "+id);
@@ -314,7 +314,7 @@ angular.module('gdgorgua')
         $scope.resend = function(id) {
             var reg;
             $scope.sending = true;
-            $scope.e.registrations.forEach(function(r) { if (r.googler_id==id) reg = r;});
+            $scope.e.registrations.forEach(function(r) { if (r.id==id) reg = r;});
             if (reg) {
                 $http.post('/api/events/' + $routeParams.eventId+'/resend',{id:id})
                     .then(function(){

@@ -104,17 +104,17 @@
     <script type="text/ng-template" id="confirmSend.html">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h4>Re-sending email to {{p.participant.name}} {{p.participant.surname}}</h4>
+            <h4>Re-sending email to {{p.name}} {{p.surname}}</h4>
         </div>
         <div class="modal-body">
-            Are you sure you want to send invitation email to <b>{{p.participant.email}}</b>?
-            <div ng-show='p.accepted' class='alert alert-warn'>The application is already accepted! Email probably was already sent.</div>
-            <div ng-show='!p.accepted' class='alert alert-error'>The application is not accepted! Don't give false promises</div>
+            Are you sure you want to send invitation email to <b>{{p.email}}</b>?
+            <div ng-show='p.gdg_events_participation.accepted' class='alert alert-warn'>The application is already accepted! Email probably was already sent.</div>
+            <div ng-show='!p.gdg_events_participation.accepted' class='alert alert-error'>The application is not accepted! Don't give false promises</div>
 
         </div>
         <div class="modal-footer">
             <button class="btn cancel" ng-click="dismiss()" ng-disabled='sending'>Cancel</button>
-            <button class="btn btn-primary" ng-click="resend(p.participant.id)" ng-disabled='sending'>
+            <button class="btn btn-primary" ng-click="resend(p.id)" ng-disabled='sending'>
                 <i class="icon-spinner icon-spin" ng-show='sending'></i> Resend<span ng-show='sending'>ing...</span></button>
         </div>
 
@@ -124,16 +124,16 @@
 
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h4>Deleting application of {{p.participant.name}} {{p.participant.surname}}</h4>
+            <h4>Deleting application of {{p.name}} {{p.surname}}</h4>
         </div>
         <div class="modal-body">
-            Are you sure you want to delete application of <b>{{p.participant.name}} ({{p.participant.email}})</b>?
-            <div ng-show='p.accepted' class='alert alert-error'>The application is already accepted!</div>
+            Are you sure you want to delete application of <b>{{p.name}} ({{p.email}})</b>?
+            <div ng-show='p.gdg_events_participation.accepted' class='alert alert-error'>The application is already accepted!</div>
 
         </div>
         <div class="modal-footer">
             <button class="btn cancel" ng-click="dismiss()" ng-disabled='sending'>Cancel</button>
-            <button class="btn btn-primary" ng-click="deleteApp(p.id)" ng-disabled='sending'>
+            <button class="btn btn-primary" ng-click="deleteApp(p.gdg_events_participation.id)" ng-disabled='sending'>
                 <i class="icon-spinner icon-spin" ng-show='deleting'></i> Delete<span ng-show='deleting'>ing...</span></button>
         </div>
 
@@ -167,19 +167,19 @@
         </tr>
         </thead>
         <tbody>
-        <tr ng-repeat="p in e.registrations | filter:filterEvent | filter:search | orderBy:'participant.surname'" class="clickable">
+        <tr ng-repeat="p in e.registrations | filter:filterEvent | filter:search | orderBy:'surname'" class="clickable">
             <td>
-                <input type="checkbox" ng-model='toAccept[p.id]' ng-hide='p.accepted' ng-disabled="approving">
-                <i class="icon-ok" ng-show='p.accepted'></i>
-                <i class="icon-question-sign" style='color:blue' bs-tooltip="'Not confirmed'" ng-show='e.require_confirmation && !p.confirmed'></i>
-                <i class="icon-ok-sign" style='color:green' bs-tooltip="'Confirmed'" ng-show='e.require_confirmation && p.confirmed'></i>
+                <input type="checkbox" ng-model='toAccept[p.id]' ng-hide='p.gdg_events_participation.accepted' ng-disabled="approving">
+                <i class="icon-ok" ng-show='p.gdg_events_participation.accepted'></i>
+                <i class="icon-question-sign" style='color:blue' bs-tooltip="'Not confirmed'" ng-show='e.require_confirmation && !p.gdg_events_participation.confirmed'></i>
+                <i class="icon-ok-sign" style='color:green' bs-tooltip="'Confirmed'" ng-show='e.require_confirmation && p.gdg_events_participation.confirmed'></i>
             </td>
-            <td>{{p.participant.surname}}</td>
-            <td>{{p.participant.name}}</td>
-            <td>{{p.participant.email}}</td>
+            <td>{{p.surname}}</td>
+            <td>{{p.name}}</td>
+            <td>{{p.email}}</td>
             <td>
                 <button class='btn btn-danger' ng-controller='notificationDeleteAppCtrl' bs-tooltip="'Delete application'" bs-modal="'confirmDeleteApp.html'"><i class="icon-trash"></i></button>
-                <button class='btn' ng-click='show(p.googler_id)' bs-tooltip="'Show participants\'s details'"><i class='icon-user'></i></button>
+                <button class='btn' ng-click='showParticipant(p.id)' bs-tooltip="'Show participants\'s details'"><i class='icon-user'></i></button>
                 <button class='btn'  ng-click='showCard(p.id)' bs-tooltip="'Application info'"><i class="icon-credit-card"></i></button>
                 <button class='btn' ng-controller='notificationResendCtrl' bs-tooltip="'Send confirmation email'" bs-modal="'confirmSend.html'"><i class="icon-envelope"></i></button>
             </td>

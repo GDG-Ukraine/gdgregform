@@ -7,37 +7,33 @@ module.exports = function(app) {
 // list
 app.get('/api/participants', function (req, res) {
    if (!auth.check(req,res,'god')) return;
-   models.participants.findAll().done(function(participants) {
+   models.participants.findAll().then(function(participants) {
      res.send(participants);
   })
 });
 
-function loadEventsForParticipant(p) {
-    var callback;
-    p.getEvents().done(function(events) {
-        var newP = db.copySqObject(p);
-        newP.events = events;
-        callback(newP);
+function loadEventsForParticipant(id) {
+    return models.participants.find(id).then(function(participant) {
+        var participantObj = participant.get();
+        return participant.getEvents().then(function (events) {
+            participantObj.events = events.map(function (event) {
+                return event.get();
+            });
+            return participantObj;
+        })
     });
-    return {
-        then:function(cb) { callback = cb; }
-    }
-
-
 }
 
 // get
 app.get('/api/participants/:id', function (req, res) {
     if (!auth.check(req,res,'god')) return;
     if (!req.params.id) return res.send("Invalid request");
-    models.participants.find(req.params.id).then(function (p) {
-        loadEventsForParticipant(p)
-            //.then(function(data) { res.json(data);});
-            .then(res.json.bind(res));
-    }).error(app.onError(res));
+    loadEventsForParticipant(req.params.id).
+      then(res.json.bind(res)).
+      catch(app.onError(res));
 });
 
-// create 
+// create
 app.post('/api/participants', function (req, res){
   if (!req.body.user || !req.body.user.email) { return res.send("Incorrect request");};
   models.participants.find({ where: { email: req.body.user.email }})
@@ -64,7 +60,7 @@ app.post('/api/participants', function (req, res){
 // update
 app.put('/api/participants/:id', function (req, res){
   if (!auth.check(req,res,'god')) return;
-  models.participants.find(req.params.id).then(function (p) { 
+  models.participants.find(req.params.id).then(function (p) {
 	p.updateAttributes(req.body)
 	  .then(function(p) {
             loadEventsForParticipant(p)
@@ -76,7 +72,7 @@ app.put('/api/participants/:id', function (req, res){
 // delete
 /*app.delete('/api/participants/:id', function (req, res){
   if (!auth.check(req,res)) return;
-  models.participants.find(req.params.id).then(function (p) { 
+  models.participants.find(req.params.id).then(function (p) {
 	p.destroy()
 	  .then(function(p) {
             models.participations.findAll({where:{googler_id:req.params.id}}).done(function(regs) {
@@ -84,7 +80,7 @@ app.put('/api/participants/:id', function (req, res){
                 res.send({ok: true});
             });
         }).error(app.onError(res));
-  }).error(function(err) { console.log(err);res.send(err); }); 
+  }).error(function(err) { console.log(err);res.send(err); });
 });
 */
 }

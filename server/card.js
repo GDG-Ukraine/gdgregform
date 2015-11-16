@@ -4,7 +4,7 @@ var path = require('path'),
     secret = require('./secret'),
     ejs = require('ejs'),
     fs = require('fs'),
-    juice = require('juice'),
+    juice = require('juice2'),
     nodemailer = require('nodemailer')
     ;
 

@@ -7,6 +7,9 @@ exports.gevents.belongsToMany(exports.participants, { as: 'Participants', throug
 
 exports.gevents.belongsTo(exports.places,{'foreignKey': 'host_gdg_id', as:'Place'});
 
+exports.invites.belongsTo(exports.gevents, {'foreignKey': 'event_id', as:'Event'});
+exports.gevents.hasMany(exports.invites, { as: 'Invites', 'foreignKey': 'event_id' });
+
 exports.participations.belongsTo(exports.gevents, {foreignKey:'event_id', as:"Event"});
 exports.participations.belongsTo(exports.participants, {foreignKey:'googler_id', as:"Participant"});
 

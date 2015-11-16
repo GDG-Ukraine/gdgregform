@@ -7,41 +7,36 @@ db = require('../db');
 module.exports = function (app) {
 
     function loadEvent(id, cb) {
-        chainer = new Sequelize.Utils.QueryChainer();
-        chainer
-            .add(models.gevents.find(id))
-            .add(models.participations.findAll({where: {event_id: id}, include: [
-                {model: models.participants, as: "Participant"}
-            ]}))
-            .add(models.invites.findAll({where: {event_id: id}}))
-            .run()
-            .then(function (results) {
-                var e = results[0],
-                    regs = results[1],
-                    dbinvites = results[2];
-                var invites = dbinvites.map(function(i) { return i.selectedValues; });
-                //dbInvites.forEach(function(i) { invites.push(i.selectedValues); }
-                //console.log("loaded invites for ", id, invites);
-                if (!e) {
-                    cb("no event", null);
-                    return;
+        return models.gevents.find(id).then(function (event) {
+            if (!event) throw new Error("There is no such event");
+
+            var eventObj = event.get();
+            if (eventObj.fields) eventObj.fields = JSON.parse(eventObj.fields);
+            if (eventObj.hidden) {
+                try {
+                    eventObj.hidden = JSON.parse(eventObj.hidden);
+                } catch(e) {
+                    // eventObj.hidden[0] != '['
+                    eventObj.hidden = eventObj.hidden.split(',');
                 }
-                if (e.fields) e.fields = JSON.parse(e.fields);
-                if (e.hidden) {
-                    if (e.hidden[0] != '[') e.hidden = e.hidden.split(',');
-                    else e.hidden = JSON.parse(e.hidden);
-                }
-                for (var n = 0; n < regs.length; n++) {
-                    regs[n] = regs[n].values;
-                    regs[n].cardUrl = secret.crypt(regs[n].id + "");
-                }
-                var nE = e.values;
-                nE.registrations = regs;
-                nE.invites = invites;
-                cb(null, nE);
-            }).error(function (e) {
-                cb("Cant load" + e, null);
-            });
+            }
+
+            return Sequelize.Promise.
+                all([event.getParticipants(), event.getInvites()]).
+                then(function (res) {
+                    eventObj.registrations = res[0].map(function (row) {
+                        var _res = row.get();
+                        _res.cardUrl = secret.crypt(_res.id + "");
+                        _res.gdg_events_participation = _res.gdg_events_participation.get();
+                        return _res
+                    });
+                    eventObj.invites = res[1].map(function (row) {
+                        return row.get()
+                    });
+                    // cb(null, eventObj);
+                    return eventObj;
+                });
+        });
     }
 
     function checkAccessToEvent(req, res, id) {
@@ -57,15 +52,15 @@ module.exports = function (app) {
     app.get('/api/events/:id', function (req, res) {
         if (!auth.check(req, res)) return;
         if (!req.params.id) return res.send(404, "Not found");
-        loadEvent(req.params.id, function (err, data) {
-            if (err) app.onError(res)(err);
-            else if (!checkAccessToEvent(req, res, data.host_gdg_id)) return;
-            else {
-                prepareObj(data);
-                //console.log(data);
-                res.send(data);
-            }
-        });
+
+        loadEvent(req.params.id).then(function (event) {
+            if (!checkAccessToEvent(req, res, event.host_gdg_id))
+                throw new Error("Access denied to this event");
+            prepareObj(event);
+            res.send(event);
+        }).catch(function (e) {
+            app.onError(res)("Can't load event: " + err);
+        })
     });
 // create
     app.post('/api/events', function (req, res) {

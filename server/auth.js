@@ -1,6 +1,7 @@
-var everyauth = require('everyauth');
+var everyauth = require('everyauth'),
+    config = require('../config.js');
 
-var authMode = require('../config.js').auth;
+var authMode = config.auth;
 
 everyauth.debug = false;
 
@@ -66,8 +67,8 @@ exports.restrictAdmin = function(req, res, next) {
 };
 
 everyauth.google
-    .appId("655913597185.apps.googleusercontent.com")
-    .appSecret("Qp_OB2nlEhKzaaFeQnwRVMS7")
+    .appId(config.google_oauth.id)
+    .appSecret(config.google_oauth.secret)
     //.scope('https://www.googleapis.com/auth/userinfo.profile')
     //.scope('https://www.googleapis.com/auth/userinfo#email https://www.googleapis.com/auth/userinfo.profile')
     .scope(function(req,res) {

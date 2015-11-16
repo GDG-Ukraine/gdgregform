@@ -1,4 +1,5 @@
 var path = require('path'),
+    config = require('../config.js'),
     db = require('./db'),
     models = require('./models'),
     secret = require('./secret'),
@@ -82,8 +83,8 @@ exports.createMailer = function (sender,from) {
         port: 465,
         auth: {XOAuth2: {
             user: sender.email,
-            clientId: "655913597185.apps.googleusercontent.com",
-            clientSecret: "Qp_OB2nlEhKzaaFeQnwRVMS7",
+            clientId: config.google_oauth.id,
+            clientSecret: config.google_oauth.secret,
             refreshToken: sender.refreshToken,
             accessToken: sender.accessToken,
             timeout: 3600

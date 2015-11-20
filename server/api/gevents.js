@@ -33,7 +33,6 @@ module.exports = function (app) {
                     eventObj.invites = res[1].map(function (row) {
                         return row.get()
                     });
-                    // cb(null, eventObj);
                     return eventObj;
                 });
         });
@@ -56,7 +55,6 @@ module.exports = function (app) {
         loadEvent(req.params.id).then(function (event) {
             if (!checkAccessToEvent(req, res, event.host_gdg_id))
                 throw new Error("Access denied to this event");
-            prepareObj(event);
             res.send(event);
         }).catch(function (e) {
             app.onError(res)("Can't load event: " + err);
@@ -356,16 +354,4 @@ module.exports = function (app) {
             r.end();
         });
     });
-}
-
-var i = 0;
-function prepareObj(obj) {
-    for(var k in obj)
-    {
-        if (!obj.hasOwnProperty(k) || k[0]=='_' || k == 'include' || k =='options') delete obj[k];
-        else if (typeof(obj[k])=='object') {
-            prepareObj(obj[k]);
-        }
-    }
-
 }

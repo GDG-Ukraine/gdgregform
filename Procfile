@@ -1,1 +1,1 @@
-web: node start.js
+web: node --harmony --harmony_arrow_functions --harmony_array_includes start

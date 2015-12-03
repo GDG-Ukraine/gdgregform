@@ -6,7 +6,7 @@ db = require('../db');
 
 module.exports = function (app) {
 
-    function loadEvent(id, cb) {
+    function loadEvent(id) {
         return models.gevents.find(id).then(function (event) {
             if (!event) throw new Error("There is no such event");
 
@@ -57,8 +57,8 @@ module.exports = function (app) {
                 throw new Error("Access denied to this event");
             res.send(event);
         }).catch(function (e) {
-            app.onError(res)("Can't load event: " + err);
-        })
+            app.onError(res)("Can't load event: " + e);
+        });
     });
 // create
     app.post('/api/events', function (req, res) {
@@ -157,7 +157,7 @@ module.exports = function (app) {
                     }
                 }
                 //res.send({ok:true});
-            }).error(app.onError(res));
+            }).rror(app.onError(res));
         ;
         return true;
     });
@@ -225,7 +225,7 @@ module.exports = function (app) {
     // generate report
     app.post('/api/events/:id/invites', function(req, res) {
         if (!auth.check(req, res)) return false;
-        console.log("Generating ", req.body.number,"invites");
+        console.log("Generating ", req.body.number, "invites");
         chainer = new Sequelize.Utils.QueryChainer();
         for (var i = 0;i<req.body.number;i++) {
             var code = require('../secret').crypt('invite'+i+(Math.random()));
@@ -238,13 +238,13 @@ module.exports = function (app) {
                 res.json({ok:true});
             })
             .error(app.onError(res));
-    })
+    });
 
     app.post('/api/events/:id/report', function (req, res) {
         if (!auth.check(req, res)) return false;
-        loadEvent(req.params.id, function (err, event) {
-            if (err) return app.onError(res);
-            if (!checkAccessToEvent(req, res, event.host_gdg_id)) return;
+        loadEvent(req.params.id).then(function (event) {
+            if (!checkAccessToEvent(req, res, event.host_gdg_id))
+                throw new Error("Access denied to this event");
 
             var https = require('https');
             //const boundary = '-------314159265358979323846';
@@ -262,40 +262,27 @@ module.exports = function (app) {
                 "english_knowledge", "t_shirt_size", "gender", "additional_info"];
             var fields = dfields.slice(0);
             fields.unshift("reg#");
-            for (var fn in event.fields) {
-                var s = event.fields[fn].name;
-                if (s.indexOf('"') >= 0) s = s.replace(/"/g, '""');
-                fields.push(s);
-            }
-
-            function findReg(id) {
-                for (var n in event.registrations)
-                    if (event.registrations[n].googler_id == id) return event.registrations[n];
-                return null;
-            }
+            event.fields.every(function (field) {
+                fields.push(field.name.replace(/"/g, '""'))
+            })
 
             var data = '"' + fields.join('","') + '"\n';
             for (var n = 0; n < event.registrations.length; n++) {
-                var p = event.registrations[n].participant;
-                var reg = event.registrations[n];
-                var fdata;
-                try {
-                    fdata = JSON.parse(reg.fields); } catch(err) {
-                    console.log("Error parsing JSON fields:",reg.fields);
-                }
-                if (!fdata) fdata = {};
+                var p = event.registrations[n];
+                var reg = p.gdg_events_participation;
                 if (req.query.mode == 'approved' && !reg.accepted) continue;
                 if (req.query.mode == 'waiting' && reg.accepted) continue;
+                var fdata = reg.fields || {};
                 var cols = [];
                 fields.forEach(function (field) {
-                    if (field == 'reg#') cols.push(reg.id);
+                    if (field == 'reg#') cols.push(p.id);
                     else {
                         var s = p[field];
                         if (!s) {
                             s = fdata[field];
                             if (!s) s = '';
                         }
-                        if (typeof s === 'string' && s.indexOf('"') >= 0) s = s.replace(/"/g, '""');
+                        if (typeof s === 'string') s = s.replace(/"/g, '""');
                         cols.push(s);
                     }
                 });
@@ -322,11 +309,10 @@ module.exports = function (app) {
             };
             options.method = 'POST';
 
-            var r = https.request(options,function (hres) {
+            var r = https.request(options, function (hres) {
                 console.log("Got response: " + hres.statusCode);
                 var data = '';
                 hres.on('data', function (chunk) {
-                    //console.log('BODY: ' + chunk);
                     data += chunk;
                 });
                 hres.on('end', function () {
@@ -348,10 +334,11 @@ module.exports = function (app) {
             }).on('error', function (e) {
                     console.log("Got error: " + e.message);
                     res.send({ok: false});
-                });
-            console.log("r:", multipartRequestBody);
+            });
             r.write(multipartRequestBody, 'utf8');
             r.end();
+        }).catch(function (e) {
+            app.onError(res)("Can't load event: " + e);
         });
     });
 }

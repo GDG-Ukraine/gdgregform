@@ -10,8 +10,8 @@ module.exports = function(app) {
             user: req.user
         };
         if (req.user && req.user.filter_place) {
-            models.places.find(req.user.filter_place).done(function(place) {
-                info.place = place.values;
+            models.places.find(req.user.filter_place).then(function(place) {
+                info.place = place.get();
                 res.send(info);
             });
         } else res.send(info);

@@ -157,7 +157,7 @@ module.exports = function (app) {
                     }
                 }
                 //res.send({ok:true});
-            }).rror(app.onError(res));
+            }).error(app.onError(res));
         ;
         return true;
     });

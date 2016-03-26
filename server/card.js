@@ -77,7 +77,7 @@ var vCardText = function (user, reg, url) {
 //var mailConfig = require('../config.js').mail;
 exports.createMailer = function (sender,from) {
     console.log("mailer from",from);
-    var config = {
+    var mailConfig = {
         host: "smtp.gmail.com",
         secureConnection: true,
         port: 465,
@@ -91,7 +91,7 @@ exports.createMailer = function (sender,from) {
         }}
     };
 
-    var smtpTransport = nodemailer.createTransport("SMTP", /* mailConfig*/config);
+    var smtpTransport = nodemailer.createTransport("SMTP", mailConfig);
     return {
         sendEmail: function (options, cb) {
             var id = options.id;
